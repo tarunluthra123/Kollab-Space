@@ -9,6 +9,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import CSS from "csstype";
+import { Link, HashRouter as Router } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -86,8 +87,12 @@ const MenuAppBar: React.FC<Props> = (props: Props) => {
               open={open}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>My account</MenuItem>
+              <Router>
+                <Link to="/login">
+                  <MenuItem onClick={handleClose}>Profile</MenuItem>
+                </Link>
+                <MenuItem onClick={handleClose}>My account</MenuItem>
+              </Router>
             </Menu>
           </div>
         </Toolbar>
