@@ -11,6 +11,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Axios from "axios";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -66,6 +67,7 @@ const LoginPage: React.FC<Props> = (props) => {
     username: "",
     password: "",
   });
+  const history = useHistory();
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const name = event.target.name;
@@ -85,14 +87,22 @@ const LoginPage: React.FC<Props> = (props) => {
 
   const handleLogin = () => {
     Axios.post("/api/login", userIdPass)
-      .then((response) => {
-        const token: string = response.data.data.token;
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.error) {
+          const err = res.error;
+          console.error("Error = ", err);
+          alert(err.msg);
+          return;
+        }
+        const token: string = res.data.token;
         const userInfo = {
           token,
           username: userIdPass.username,
-          name: response.data.data.name,
+          name: res.data.name,
         };
         props.loginUser(userInfo);
+        history.push("/");
       })
       .catch((err) => {
         console.error("Error = ", err);

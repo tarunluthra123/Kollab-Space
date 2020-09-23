@@ -15,6 +15,7 @@ const App: React.FC<Props> = (props) => {
 
   React.useEffect(() => {
     const token: string | null = localStorage.getItem("kollabUserToken");
+    console.log("app - token=", token);
     if (token) {
       Axios.get("/api/login", {
         params: {
@@ -33,6 +34,7 @@ const App: React.FC<Props> = (props) => {
             username: data.username,
           };
           loginUser(userInfo);
+          console.log("app.tsx , userInfo=", userInfo);
         })
         .catch((err) => {
           console.error("Error = ", err);

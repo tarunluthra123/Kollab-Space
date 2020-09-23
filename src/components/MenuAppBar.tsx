@@ -10,6 +10,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import CSS from "csstype";
 import { Link, HashRouter as Router } from "react-router-dom";
+import { Button, Segment } from "semantic-ui-react";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,10 +28,19 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const h1Styling: CSS.Properties = {
   paddingRight: "1%",
+  textDecoration: "none",
 };
+
+interface UserInfo {
+  token: string;
+  username: string;
+  name: string;
+}
 
 interface Props {
   pageTitle: string;
+  user: UserInfo | null;
+  logoutUser: () => void;
 }
 
 const MenuAppBar: React.FC<Props> = (props: Props) => {
@@ -48,54 +58,80 @@ const MenuAppBar: React.FC<Props> = (props: Props) => {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="menu"
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" className={classes.title}>
-            {props.pageTitle}
-          </Typography>
-          <h1 style={h1Styling}>Kollab Space</h1>
-          <div>
+      <AppBar
+        position="static"
+        style={{
+          backgroundColor: "black",
+          color: "white",
+        }}
+      >
+        <Router>
+          <Toolbar>
             <IconButton
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
+              edge="start"
+              className={classes.menuButton}
               color="inherit"
+              aria-label="menu"
             >
-              <AccountCircle />
+              <MenuIcon />
             </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={open}
-              onClose={handleClose}
-            >
-              <Router>
+            <Typography variant="h6" className={classes.title}>
+              {props.pageTitle}
+            </Typography>
+            <h1 style={h1Styling}>
+              <a href="/" style={{ color: "white" }}>
+                Kollab Space
+              </a>
+            </h1>
+            {!props.user && (
+              <div>
                 <Link to="/login">
-                  <MenuItem onClick={handleClose}>Profile</MenuItem>
+                  <Button size="large" inverted color="blue">
+                    Log In
+                  </Button>
                 </Link>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-              </Router>
-            </Menu>
-          </div>
-        </Toolbar>
+                <Link to="/signup">
+                  <Button size="large" inverted color="violet">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
+            )}
+            {props.user && (
+              <div>
+                <IconButton
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={handleMenu}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={open}
+                  onClose={handleClose}
+                >
+                  <Link to="/login">
+                    <MenuItem onClick={handleClose}>Profile</MenuItem>
+                  </Link>
+                  <MenuItem onClick={handleClose}>My account</MenuItem>
+                </Menu>
+              </div>
+            )}
+          </Toolbar>
+        </Router>
       </AppBar>
     </div>
   );

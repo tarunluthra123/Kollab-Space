@@ -31,7 +31,7 @@ route.post("/", async (req, res) => {
       });
     }
   } catch (err) {
-    res.send({ errors: err });
+    res.send({ error: err });
   }
 });
 
