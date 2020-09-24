@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import socketIOClient from "socket.io-client";
-import { Button, Card } from "semantic-ui-react";
+import { Button, Card, Feed } from "semantic-ui-react";
 import CSS from "csstype";
 import { Accordion, Form, Comment, Segment } from "semantic-ui-react";
 
@@ -63,17 +63,11 @@ const ChatBox: React.FC<Props> = (props) => {
       socket = socketValue;
     }
 
-    console.log("socket=", socket);
-
-    socket.emit("msg_send", {
-      user: props.user,
-      msg: "hello there",
-    });
-
     socket.on("messageReceived", (data: ChatMessage) => {
       const { user, message } = data;
       const timestamp = new Date();
       console.log("received", data);
+      console.log(timestamp);
       addMessageToChat(user, message, timestamp);
     });
   });
@@ -106,11 +100,15 @@ const ChatBox: React.FC<Props> = (props) => {
       const notification = data.notification;
       if (notification === "New Participant") {
         const newUser: UserInfo = data.user;
-        console.log(newUser.name + " joined the chatroom. Say Hi to them.");
-        setCurrentRoom({
-          name: data.room.name,
-          password: data.room.password,
-        });
+        if (props.user?.token === newUser.token) {
+          //New user is the current user himself
+          setCurrentRoom({
+            name: data.room.name,
+            password: data.room.password,
+          });
+        } else {
+          addFeedEventToChat(newUser.name + " has joined the chatroom.");
+        }
       } else if (notification === "Participant Left") {
         const oldUser: UserInfo = data.user;
         console.log(oldUser.name + " left the chat.");
@@ -126,6 +124,26 @@ const ChatBox: React.FC<Props> = (props) => {
     });
   };
 
+  const generateFeedEvent = (eventMessage: string, timestamp: Date) => {
+    return (
+      <Feed>
+        <Feed.Event>
+          <Feed.Label image={"/"} alt={"img"} />
+          <Feed.Content
+            date={
+              (timestamp.getHours() % 12) +
+              ":" +
+              timestamp.getMinutes() +
+              ` ` +
+              (timestamp.getHours() >= 12 ? "PM" : "AM")
+            }
+            summary={eventMessage}
+          />
+        </Feed.Event>
+      </Feed>
+    );
+  };
+
   const generateComment = (
     user: UserInfo,
     message: string,
@@ -138,13 +156,20 @@ const ChatBox: React.FC<Props> = (props) => {
           <Comment.Author>{user.name}</Comment.Author>
           <Comment.Metadata>
             <div>
-              {timestamp.getHours}:{timestamp.getMinutes} AM
+              {timestamp.getHours() % 12}:{timestamp.getMinutes() + ` `}{" "}
+              {timestamp.getHours() >= 12 ? "PM" : "AM"}
             </div>
           </Comment.Metadata>
           <Comment.Text>{message}</Comment.Text>
         </Comment.Content>
       </Comment>
     );
+  };
+
+  const addFeedEventToChat = (eventMessage: string) => {
+    const timestamp = new Date();
+    const feedEvent = generateFeedEvent(eventMessage, timestamp);
+    setChatMessageList([...chatMessageList, feedEvent]);
   };
 
   const addMessageToChat = (
@@ -165,6 +190,7 @@ const ChatBox: React.FC<Props> = (props) => {
       message,
       room,
     });
+    setChatInputBoxMessage("");
   };
 
   return (
@@ -257,11 +283,12 @@ const ChatBox: React.FC<Props> = (props) => {
           <Segment raised>
             <Comment.Group>{chatMessageList}</Comment.Group>
             <Form reply>
-              <Form.TextArea
+              <Form.Input
                 placeholder="Type your message here"
                 onChange={(e: any) => {
                   setChatInputBoxMessage(e.target.value);
                 }}
+                value={chatInputBoxMessage}
               />
               <Button
                 content="Send"
