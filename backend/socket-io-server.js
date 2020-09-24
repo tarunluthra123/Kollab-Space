@@ -31,15 +31,22 @@ const generateNewRoom = () => {
 
 exports = module.exports = function (server) {
   const io = require("socket.io")(server);
+  chatRooms.set("abc", "def"); //For testing purposes
 
   io.on("connection", (socket) => {
-    // console.log("connected ", socket.id);
     socket.on("msg_send", (data) => {
       console.log(data);
 
       socket.emit("hello there", {
         msg: "hola",
       });
+    });
+
+    socket.on("messageReceived", (data) => {
+      const { user, message, room } = data;
+      const roomName = room.name;
+      console.log("messageReceived = ", data);
+      io.to(roomName).emit("messageReceived", { user, message, room });
     });
 
     socket.on("createNewRoom", async (data) => {
@@ -55,6 +62,7 @@ exports = module.exports = function (server) {
     });
 
     socket.on("joinChatRoom", async (data) => {
+      console.log("in join chat room = ", data);
       const user = data.user;
       const verified = await verifyUserWithToken(user.token, user.name);
       if (verified) {
@@ -64,7 +72,11 @@ exports = module.exports = function (server) {
           const correctPassword = chatRooms.get(roomName);
           if (correctPassword === roomPassword) {
             socket.join(roomName);
-            io.to(roomName).emit(user.name + " has joined the room.");
+            io.to(roomName).emit("roomJoinNotification", {
+              notification: "New Participant",
+              room: { name: roomName, password: roomPassword },
+              user,
+            });
           } else {
             socket.emit("Incorrect room password");
           }
