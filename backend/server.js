@@ -10,7 +10,7 @@ const io = socket_io_server(server);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/", express.static(path.join(__dirname, "./build")));
+app.use("/", express.static(path.join(__dirname, "../build")));
 app.use("/api", require("./api").route);
 
 //For testing purpose

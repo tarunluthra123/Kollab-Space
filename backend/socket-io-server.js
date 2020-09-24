@@ -34,19 +34,8 @@ exports = module.exports = function (server) {
   chatRooms.set("abc", "def"); //For testing purposes
 
   io.on("connection", (socket) => {
-    socket.on("msg_send", (data) => {
-      console.log(data);
-
-      socket.emit("hello there", {
-        msg: "hola",
-      });
-    });
-
     socket.on("messageReceived", (data) => {
-      const { user, message, room } = data;
-      const roomName = room.name;
-      console.log("messageReceived = ", data);
-      io.to(roomName).emit("messageReceived", { user, message, room });
+      io.to(data.room.name).emit("messageReceived", data);
     });
 
     socket.on("createNewRoom", async (data) => {

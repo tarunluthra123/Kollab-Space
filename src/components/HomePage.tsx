@@ -9,8 +9,16 @@ interface UserInfo {
   name: string;
 }
 
+interface RoomDetails {
+  name: string;
+  password: string;
+}
+
 interface Props {
   user: UserInfo | null;
+  socket: SocketIOClient.Socket | null;
+  room: RoomDetails | null;
+  chatMessageList: Array<any>;
 }
 
 const HomePage: React.FC<Props> = (props) => {
@@ -20,7 +28,12 @@ const HomePage: React.FC<Props> = (props) => {
         <VideoScreen />
       </Grid>
       <Grid item xs={3}>
-        <RightPanel user={props.user} />
+        <RightPanel
+          user={props.user}
+          socket={props.socket}
+          room={props.room}
+          chatMessageList={props.chatMessageList}
+        />
       </Grid>
     </Grid>
   );

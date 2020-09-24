@@ -7,11 +7,7 @@ function generateAccessToken(userInfo) {
   return jwt.sign(userInfo, TOKEN_SECRET);
 }
 
-let c = 0;
-
 route.get("/", (req, res) => {
-  // console.log("c=", c);
-  c++;
   jwt.verify(req.query.token, TOKEN_SECRET, (err, decoded) => {
     if (err) {
       res.status = 500;
