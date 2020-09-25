@@ -2799,6 +2799,11 @@ brace-expansion@^1.1.7:
     balanced-match "^1.0.0"
     concat-map "0.0.1"
 
+brace@^0.11.1:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/brace/-/brace-0.11.1.tgz#4896fcc9d544eef45f4bb7660db320d3b379fe58"
+  integrity sha1-SJb8ydVE7vRfS7dmDbMg07N5/lg=
+
 braces@^2.3.1, braces@^2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/braces/-/braces-2.3.2.tgz#5979fd3f14cd531565e5fa2df1abfff1dfaee729"
@@ -9773,6 +9778,15 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.2.8:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+react-ace-editor@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/react-ace-editor/-/react-ace-editor-0.0.3.tgz#0f0b85d7695c13c728e5b74bd6e4291dc07e9d15"
+  integrity sha512-Tssqvr1UCAibU4p15j1I7jEENxCDTxYGdfnJy+1SAhX8aMTUFC23Jts2eH/SJv10yORxV5Uro/ZzZzi5scD9zA==
+  dependencies:
+    brace "^0.11.1"
+    prop-types "^15.6.2"
+    react "^16.4.2"
+
 react-ace@^9.1.4:
   version "9.1.4"
   resolved "https://registry.yarnpkg.com/react-ace/-/react-ace-9.1.4.tgz#7c45c361aa5fe1efa3313fa876bce30aa64a244f"
@@ -9958,7 +9972,7 @@ react-transition-group@^4.4.0:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@^16.13.1:
+react@^16.13.1, react@^16.4.2:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react/-/react-16.13.1.tgz#2e818822f1a9743122c063d6410d85c1e3afe48e"
   integrity sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w==

@@ -1,5 +1,5 @@
 import React from "react";
-import VideoScreen from "./VideoScreen";
+import LeftPanel from "./LeftPanel";
 import RightPanel from "./RightPanel";
 import { Grid } from "@material-ui/core";
 
@@ -25,7 +25,7 @@ const HomePage: React.FC<Props> = (props) => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={9}>
-        <VideoScreen />
+        <LeftPanel user={props.user} socket={props.socket} room={props.room} />
       </Grid>
       <Grid item xs={3}>
         <RightPanel

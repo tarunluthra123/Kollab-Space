@@ -76,5 +76,21 @@ exports = module.exports = function (server) {
         socket.emit("Invalid user");
       }
     });
+
+    socket.on("codeChange", (data) => {
+      if (data.room && data.room.name)
+        io.to(data.room.name).emit("codeUpdate", {
+          code: data.code,
+          cursorPosition: data.cursorPosition,
+        });
+    });
+
+    socket.on("cursorChange", (data) => {
+      if (data.room && data.room.name)
+        io.to(data.room.name).emit("cursorPositionUpdate", {
+          row: data.row,
+          column: data.column,
+        });
+    });
   });
 };
