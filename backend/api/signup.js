@@ -25,7 +25,7 @@ route.post("/", async (req, res) => {
       };
       User.create(userObject);
       const token = generateAccessToken(userObject);
-      res.send({
+      res.json({
         data: {
           token,
         },

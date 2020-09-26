@@ -4,6 +4,7 @@ import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import HomePage from "./HomePage";
 import About from "./About";
 import LoginPage from "./LoginPage";
+import SignupPage from "./SignupPage";
 import socketIOClient from "socket.io-client";
 
 const ENDPOINT = "http://127.0.0.1:5000";
@@ -130,6 +131,9 @@ const MainPage: React.FC<Props> = (props) => {
           <Route exact path="/about" component={About} />
           <Route exact path="/login" component={LoginPage}>
             <LoginPage loginUser={props.loginUser} />
+          </Route>
+          <Route exact path="/signup" component={SignupPage}>
+            <SignupPage loginUser={props.loginUser} />
           </Route>
         </Switch>
       </Router>
