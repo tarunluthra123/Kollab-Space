@@ -43,8 +43,7 @@ exports = module.exports = function (server) {
       const verified = await verifyUserWithToken(user.token, user.name);
       if (verified) {
         const newRoom = generateNewRoom();
-        socket.join(newRoom.roomName);
-        io.to(newRoom.roomName).emit("New room", newRoom);
+        socket.emit("createdNewRoom", newRoom);
       } else {
         socket.emit("Invalid user");
       }

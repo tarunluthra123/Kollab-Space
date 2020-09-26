@@ -60,8 +60,16 @@ const ChatBox: React.FC<Props> = (props) => {
     socket.emit("createNewRoom", {
       user: props.user,
     });
-    socket.on("New room", (data: any) => {
+
+    console.log("here");
+
+    socket.on("createdNewRoom", (data: any) => {
       console.log(data);
+      socket.emit("joinChatRoom", {
+        user: props.user,
+        room: data,
+        avatarInfo,
+      });
     });
   };
 
@@ -72,8 +80,6 @@ const ChatBox: React.FC<Props> = (props) => {
       roomName,
       roomPassword,
     };
-    console.log(roomName, roomPassword);
-    console.log("before join chat room=", avatarInfo);
     socket.emit("joinChatRoom", {
       user: props.user,
       room,
@@ -206,6 +212,7 @@ const ChatBox: React.FC<Props> = (props) => {
                           date={
                             (timestamp.getHours() % 12) +
                             ":" +
+                            (timestamp.getMinutes() <= 9 ? "0" : "") +
                             timestamp.getMinutes() +
                             ` ` +
                             (timestamp.getHours() >= 12 ? "PM" : "AM")
@@ -232,6 +239,7 @@ const ChatBox: React.FC<Props> = (props) => {
                         <Comment.Metadata>
                           <div>
                             {timestamp.getHours() % 12}:
+                            {timestamp.getMinutes() <= 9 ? "0" : ""}
                             {timestamp.getMinutes() + ` `}{" "}
                             {timestamp.getHours() >= 12 ? "PM" : "AM"}
                           </div>
