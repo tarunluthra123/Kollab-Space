@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import AceEditor from "react-ace";
-import { Grid, Segment, Select, DropdownProps, Radio } from "semantic-ui-react";
+import {
+  Grid,
+  Segment,
+  Select,
+  DropdownProps,
+  Radio,
+  Dropdown,
+} from "semantic-ui-react";
 
 import "ace-builds/src-noconflict/ext-language_tools";
 
@@ -24,7 +31,6 @@ import "ace-builds/src-noconflict/theme-textmate";
 import "ace-builds/src-noconflict/theme-solarized_dark";
 import "ace-builds/src-noconflict/theme-solarized_light";
 import "ace-builds/src-noconflict/theme-terminal";
-import ReactAce from "react-ace/lib/ace";
 
 interface UserInfo {
   token: string;
@@ -45,13 +51,14 @@ interface Props {
 
 const CodeEditor: React.FC<Props> = (props) => {
   const [code, setCode] = useState<string>("function print(x){console.log(x)}");
-  const [editorLanguage, setEditorLanguage] = useState<string>("javascript");
+  const [editorLanguage, setEditorLanguage] = useState<string>("java");
   const [editorTheme, setEditorTheme] = useState<string>("monokai");
   const [editorFontSize, setEditorFontSize] = useState<number>(18);
   const [enableAutocomplete, setEnableAutocomplete] = useState<boolean>(true);
   const editorRef: any = useRef();
   const socketValue = props.socket;
   const currentRoom = props.room;
+  let selectedLanguageTag = editorLanguage;
 
   let socket: SocketIOClient.Socket;
 
@@ -79,8 +86,20 @@ const CodeEditor: React.FC<Props> = (props) => {
           editor.moveCursorToPosition(data);
         }
       });
+
+      socket.on("languageTagUpdate", (data: { lang: string }) => {
+        const newLanguage = data.lang;
+        console.log(data);
+        if (editorLanguage == newLanguage) return;
+        setEditorLanguage(newLanguage);
+        console.log("editorLang=", editorLanguage);
+      });
     }
   });
+
+  useEffect(() => {
+    selectedLanguageTag = editorLanguage;
+  }, [editorLanguage]);
 
   const onChange = (codeValue: string, event: any) => {
     if (codeValue == code) return;
@@ -101,6 +120,11 @@ const CodeEditor: React.FC<Props> = (props) => {
   ) => {
     if (typeof data.value === "string") {
       setEditorLanguage(data.value);
+      socket.emit("languageChange", {
+        lang: data.value,
+        room: currentRoom,
+      });
+      console.log(data.value, currentRoom);
     }
   };
 
@@ -159,11 +183,16 @@ const CodeEditor: React.FC<Props> = (props) => {
               Editor Options
             </h3>
             <div style={{ margin: "0.7%" }}>
-              Language :{" "}
-              <Select
+              Language : {` `}
+              {console.log("editorLanguage=", editorLanguage)}
+              <Dropdown
+                selection
                 placeholder="Language"
-                defaultValue={editorLanguage}
+                defaultValue={selectedLanguageTag}
                 onChange={handleLanguageTagChange}
+                selectedLabel={selectedLanguageTag}
+                defaultSelectedLabel={selectedLanguageTag}
+                value={selectedLanguageTag}
                 options={[
                   {
                     key: "javascript",

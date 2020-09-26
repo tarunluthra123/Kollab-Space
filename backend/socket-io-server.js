@@ -92,5 +92,12 @@ exports = module.exports = function (server) {
           column: data.column,
         });
     });
+
+    socket.on("languageChange", (data) => {
+      if (data.room && data.room.name)
+        io.to(data.room.name).emit("languageTagUpdate", {
+          lang: data.lang,
+        });
+    });
   });
 };
