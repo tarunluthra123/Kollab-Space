@@ -55,16 +55,17 @@ exports = module.exports = function (server) {
       const user = data.user;
       const verified = await verifyUserWithToken(user.token, user.name);
       if (verified) {
-        const roomName = data.room.roomName;
-        const roomPassword = data.room.roomPassword;
+        const { roomName, roomPassword } = data.room;
         if (chatRooms.has(roomName)) {
           const correctPassword = chatRooms.get(roomName);
           if (correctPassword === roomPassword) {
             socket.join(roomName);
+            const { avatarInfo } = data;
             io.to(roomName).emit("roomJoinNotification", {
               notification: "New Participant",
               room: { name: roomName, password: roomPassword },
               user,
+              avatarInfo,
             });
           } else {
             socket.emit("Incorrect room password");

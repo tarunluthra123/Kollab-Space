@@ -28,12 +28,13 @@ route.post("/", async (req, res) => {
       },
     });
     if (result) {
-      const name = result.name;
-      const token = generateAccessToken({ ...query, name });
+      const { name, gender } = result;
+      const token = generateAccessToken({ ...query, name, gender });
       res.send({
         data: {
           token,
           name,
+          gender,
         },
       });
     } else {

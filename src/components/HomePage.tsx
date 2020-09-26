@@ -7,6 +7,7 @@ interface UserInfo {
   token: string;
   username: string;
   name: string;
+  gender: string;
 }
 
 interface RoomDetails {

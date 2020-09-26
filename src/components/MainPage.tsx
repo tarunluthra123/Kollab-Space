@@ -12,6 +12,7 @@ interface UserInfo {
   token: string;
   username: string;
   name: string;
+  gender: string;
 }
 
 interface RoomDetails {
@@ -23,11 +24,13 @@ interface RoomJoinNotification {
   notification: string;
   user: UserInfo;
   room: RoomDetails;
+  avatarInfo: { id: number; gender: string };
 }
 
 interface ChatMessage {
   user: UserInfo;
   message: string;
+  avatarInfo: { id: number; gender: string };
 }
 
 interface Props {
@@ -55,8 +58,8 @@ const MainPage: React.FC<Props> = (props) => {
     console.log("ok");
     let counter = 0;
     socket.on("messageReceived", (data: ChatMessage) => {
-      const { user, message } = data;
-      addMessageToChat(user, message);
+      const { user, message, avatarInfo } = data;
+      addMessageToChat(user, message, avatarInfo);
       console.log(counter++);
     });
 
@@ -72,7 +75,11 @@ const MainPage: React.FC<Props> = (props) => {
             password: data.room.password,
           });
         } else {
-          addFeedEventToChat(newUser.name + " has joined the chatroom.");
+          const { avatarInfo } = data;
+          addFeedEventToChat(
+            newUser.name + " has joined the chatroom.",
+            avatarInfo
+          );
         }
       } else if (notification === "Participant Left") {
         const oldUser: UserInfo = data.user;
@@ -89,15 +96,22 @@ const MainPage: React.FC<Props> = (props) => {
     });
   });
 
-  const addFeedEventToChat = (eventMessage: string) => {
+  const addFeedEventToChat = (
+    eventMessage: string,
+    avatarInfo: { id: number; gender: string }
+  ) => {
     const timestamp = new Date();
-    const feedEvent = { type: "event", eventMessage, timestamp };
+    const feedEvent = { type: "event", eventMessage, timestamp, avatarInfo };
     setChatMessageList([...chatMessageList, feedEvent]);
   };
 
-  const addMessageToChat = (user: UserInfo, message: string) => {
+  const addMessageToChat = (
+    user: UserInfo,
+    message: string,
+    avatarInfo: { id: number; gender: string }
+  ) => {
     const timestamp = new Date();
-    const comment = { type: "comment", user, message, timestamp };
+    const comment = { type: "comment", user, message, timestamp, avatarInfo };
     setChatMessageList([...chatMessageList, comment]);
   };
 

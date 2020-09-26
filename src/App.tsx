@@ -6,6 +6,7 @@ interface UserInfo {
   token: string;
   username: string;
   name: string;
+  gender: string;
 }
 
 interface Props {}
@@ -32,6 +33,7 @@ const App: React.FC<Props> = (props) => {
             token,
             name: data.name,
             username: data.username,
+            gender: data.gender,
           };
           loginUser(userInfo);
           console.log("app.tsx , userInfo=", userInfo);

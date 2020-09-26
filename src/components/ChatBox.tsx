@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import socketIOClient from "socket.io-client";
 import { Button, Card, Feed } from "semantic-ui-react";
 import CSS from "csstype";
 import { Accordion, Form, Comment, Segment } from "semantic-ui-react";
+
+const ICON_NUMBER = Math.ceil(Math.random() * 10);
 
 const roomButtonStyle: CSS.Properties = {
   margin: "2%",
@@ -18,6 +19,7 @@ interface UserInfo {
   token: string;
   username: string;
   name: string;
+  gender: string;
 }
 
 interface RoomDetails {
@@ -39,9 +41,19 @@ const ChatBox: React.FC<Props> = (props) => {
   const socketValue = props.socket;
 
   let socket: SocketIOClient.Socket;
+  let avatarInfo: { gender: string; id: number };
 
   useEffect(() => {
     if (socketValue) socket = socketValue;
+  });
+
+  useEffect(() => {
+    if (props.user && props.user.gender) {
+      avatarInfo = {
+        gender: props.user.gender,
+        id: ICON_NUMBER,
+      };
+    }
   });
 
   const handleCreateRoom = () => {
@@ -61,9 +73,11 @@ const ChatBox: React.FC<Props> = (props) => {
       roomPassword,
     };
     console.log(roomName, roomPassword);
+    console.log("before join chat room=", avatarInfo);
     socket.emit("joinChatRoom", {
       user: props.user,
       room,
+      avatarInfo,
     });
   };
 
@@ -75,6 +89,7 @@ const ChatBox: React.FC<Props> = (props) => {
       user,
       message,
       room,
+      avatarInfo,
     });
     event.target.chatInputBox.value = "";
   };
@@ -173,11 +188,20 @@ const ChatBox: React.FC<Props> = (props) => {
             <Comment.Group>
               {chatMessageList.map((item) => {
                 if (item.type === "event") {
-                  const { timestamp, eventMessage } = item;
+                  const { timestamp, eventMessage, avatarInfo } = item;
+                  console.log(avatarInfo);
+                  let avatar: any;
+                  const { gender, id } = avatarInfo;
+                  if (gender[0] == "M") {
+                    avatar = require("../assets/male_avatars/" + id + ".svg");
+                  } else {
+                    avatar = require("../assets/female_avatars/" + id + ".svg");
+                  }
+
                   return (
                     <Feed>
                       <Feed.Event>
-                        <Feed.Label image={"/"} alt={"img"} />
+                        <Feed.Label image={avatar} alt={"img"} />
                         <Feed.Content
                           date={
                             (timestamp.getHours() % 12) +
@@ -192,14 +216,17 @@ const ChatBox: React.FC<Props> = (props) => {
                     </Feed>
                   );
                 } else {
-                  const { user, timestamp, message } = item;
+                  const { user, timestamp, message, avatarInfo } = item;
+                  const { gender, id } = avatarInfo;
+                  let avatar: any;
+                  if (gender[0] == "M") {
+                    avatar = require("../assets/male_avatars/" + id + ".svg");
+                  } else {
+                    avatar = require("../assets/female_avatars/" + id + ".svg");
+                  }
                   return (
                     <Comment>
-                      <Comment.Avatar
-                        as="a"
-                        src="/images/avatar/small/joe.jpg"
-                        alt={"img"}
-                      />
+                      <Comment.Avatar as="a" src={avatar} alt={"img"} />
                       <Comment.Content>
                         <Comment.Author>{user.name}</Comment.Author>
                         <Comment.Metadata>

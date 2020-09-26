@@ -36,6 +36,7 @@ interface UserInfo {
   token: string;
   username: string;
   name: string;
+  gender: string;
 }
 
 interface RoomDetails {
@@ -89,8 +90,7 @@ const CodeEditor: React.FC<Props> = (props) => {
 
       socket.on("languageTagUpdate", (data: { lang: string }) => {
         const newLanguage = data.lang;
-        console.log(data);
-        if (editorLanguage == newLanguage) return;
+        if (editorLanguage === newLanguage) return;
         setEditorLanguage(newLanguage);
         console.log("editorLang=", editorLanguage);
       });
