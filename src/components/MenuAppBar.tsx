@@ -10,7 +10,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import CSS from "csstype";
 import { Link, HashRouter as Router } from "react-router-dom";
-import { Button, Segment } from "semantic-ui-react";
+import { Button } from "semantic-ui-react";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -123,10 +123,24 @@ const MenuAppBar: React.FC<Props> = (props: Props) => {
                   open={open}
                   onClose={handleClose}
                 >
-                  <Link to="/login">
-                    <MenuItem onClick={handleClose}>Profile</MenuItem>
+                  <Link to="/profile">
+                    <MenuItem
+                      onClick={handleClose}
+                      style={{
+                        color: "black",
+                      }}
+                    >
+                      Profile
+                    </MenuItem>
                   </Link>
-                  <MenuItem onClick={handleClose}>My account</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      props.logoutUser();
+                      handleClose();
+                    }}
+                  >
+                    Logout
+                  </MenuItem>
                 </Menu>
               </div>
             )}

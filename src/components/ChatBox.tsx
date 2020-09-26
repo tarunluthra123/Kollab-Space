@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Feed } from "semantic-ui-react";
 import CSS from "csstype";
 import { Accordion, Form, Comment, Segment } from "semantic-ui-react";

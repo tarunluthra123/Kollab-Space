@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Layout from "./Layout";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import HomePage from "./HomePage";
 import About from "./About";
@@ -117,7 +116,7 @@ const MainPage: React.FC<Props> = (props) => {
   };
 
   return (
-    <Layout pageTitle="Home" user={props.user} logoutUser={props.logoutUser}>
+    <div>
       <Router>
         <Switch>
           <Route exact path="/" component={HomePage}>
@@ -126,18 +125,29 @@ const MainPage: React.FC<Props> = (props) => {
               socket={socketValue}
               room={currentRoom}
               chatMessageList={chatMessageList}
+              logoutUser={props.logoutUser}
             />
           </Route>
-          <Route exact path="/about" component={About} />
+          <Route exact path="/about" component={About}>
+            <About user={props.user} logoutUser={props.logoutUser} />
+          </Route>
           <Route exact path="/login" component={LoginPage}>
-            <LoginPage loginUser={props.loginUser} />
+            <LoginPage
+              loginUser={props.loginUser}
+              user={props.user}
+              logoutUser={props.logoutUser}
+            />
           </Route>
           <Route exact path="/signup" component={SignupPage}>
-            <SignupPage loginUser={props.loginUser} />
+            <SignupPage
+              loginUser={props.loginUser}
+              user={props.user}
+              logoutUser={props.logoutUser}
+            />
           </Route>
         </Switch>
       </Router>
-    </Layout>
+    </div>
   );
 };
 

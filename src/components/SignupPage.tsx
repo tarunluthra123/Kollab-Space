@@ -16,6 +16,7 @@ import {
 } from "@material-ui/core";
 import Axios from "axios";
 import { useHistory } from "react-router-dom";
+import Layout from "./Layout";
 
 const Copyright = () => {
   return (
@@ -59,6 +60,8 @@ interface UserInfo {
 
 interface Props {
   loginUser: (userInfo: UserInfo) => void;
+  user: UserInfo | null;
+  logoutUser: () => void;
 }
 
 const SignupPage: React.FC<Props> = (props) => {
@@ -115,105 +118,107 @@ const SignupPage: React.FC<Props> = (props) => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign up
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              autoComplete="fname"
-              name="firstName"
-              variant="outlined"
-              required
-              fullWidth
-              id="firstName"
-              label="First Name"
-              autoFocus
-              value={userInfo.firstName}
-              onChange={handleChange}
-            />
+    <Layout pageTitle="Sign up" user={props.user} logoutUser={props.logoutUser}>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign up
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                autoComplete="fname"
+                name="firstName"
+                variant="outlined"
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                autoFocus
+                value={userInfo.firstName}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                autoComplete="lname"
+                value={userInfo.lastName}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="username"
+                label="Username"
+                name="username"
+                value={userInfo.username}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                value={userInfo.password}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              Gender :{" "}
+              <Select
+                open={genderSelectIsOpen}
+                onClose={() => setGenderSelectIsOpen(false)}
+                onOpen={() => setGenderSelectIsOpen(true)}
+                value={userInfo.gender}
+                onChange={handleChange}
+                name="gender"
+              >
+                <MenuItem value={"M"}>Male</MenuItem>
+                <MenuItem value={"F"}>Female</MenuItem>
+              </Select>
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              id="lastName"
-              label="Last Name"
-              name="lastName"
-              autoComplete="lname"
-              value={userInfo.lastName}
-              onChange={handleChange}
-            />
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            onClick={handleSignUpSubmit}
+          >
+            Sign Up
+          </Button>
+          <Grid container justify="flex-end">
+            <Grid item>
+              <Link href="/#/login" variant="body2">
+                Already have an account? Sign in
+              </Link>
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              value={userInfo.username}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={userInfo.password}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            Gender :{" "}
-            <Select
-              open={genderSelectIsOpen}
-              onClose={() => setGenderSelectIsOpen(false)}
-              onOpen={() => setGenderSelectIsOpen(true)}
-              value={userInfo.gender}
-              onChange={handleChange}
-              name="gender"
-            >
-              <MenuItem value={"M"}>Male</MenuItem>
-              <MenuItem value={"F"}>Female</MenuItem>
-            </Select>
-          </Grid>
-        </Grid>
-        <Button
-          fullWidth
-          variant="contained"
-          color="primary"
-          className={classes.submit}
-          onClick={handleSignUpSubmit}
-        >
-          Sign Up
-        </Button>
-        <Grid container justify="flex-end">
-          <Grid item>
-            <Link href="/#/login" variant="body2">
-              Already have an account? Sign in
-            </Link>
-          </Grid>
-        </Grid>
-      </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
-    </Container>
+        </div>
+        <Box mt={5}>
+          <Copyright />
+        </Box>
+      </Container>
+    </Layout>
   );
 };
 

@@ -14,6 +14,7 @@ import {
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Axios from "axios";
 import { useHistory } from "react-router-dom";
+import Layout from "./Layout";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -44,6 +45,8 @@ interface UserInfo {
 
 interface Props {
   loginUser: (userInfo: UserInfo) => void;
+  user: UserInfo | null;
+  logoutUser: () => void;
 }
 
 interface UserIdPass {
@@ -114,63 +117,65 @@ const LoginPage: React.FC<Props> = (props) => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          id="email"
-          label="Username"
-          name="username"
-          autoComplete="username"
-          autoFocus
-          onChange={handleChange}
-        />
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-          autoComplete="current-password"
-          onChange={handleChange}
-        />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          className={classes.submit}
-          onClick={handleLogin}
-        >
-          Sign In
-        </Button>
-        <Grid container>
-          <Grid item xs></Grid>
-          <Grid item>
-            <Link href="/#/signup" variant="body2">
-              {"Don't have an account? Sign Up"}
-            </Link>
+    <Layout pageTitle="Login" user={props.user} logoutUser={props.logoutUser}>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Username"
+            name="username"
+            autoComplete="username"
+            autoFocus
+            onChange={handleChange}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            onChange={handleChange}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            onClick={handleLogin}
+          >
+            Sign In
+          </Button>
+          <Grid container>
+            <Grid item xs></Grid>
+            <Grid item>
+              <Link href="/#/signup" variant="body2">
+                {"Don't have an account? Sign Up"}
+              </Link>
+            </Grid>
           </Grid>
-        </Grid>
-        {/* </form> */}
-      </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
-    </Container>
+          {/* </form> */}
+        </div>
+        <Box mt={8}>
+          <Copyright />
+        </Box>
+      </Container>
+    </Layout>
   );
 };
 
