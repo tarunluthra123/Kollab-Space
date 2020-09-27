@@ -1,5 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Button, Card, Feed, FormProps } from "semantic-ui-react";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Card,
+  Feed,
+  Grid,
+  Header,
+  Input,
+  Label,
+  Message,
+  Modal,
+  TextArea,
+} from "semantic-ui-react";
 import CSS from "csstype";
 import { Accordion, Form, Comment, Segment } from "semantic-ui-react";
 
@@ -38,6 +49,11 @@ interface Props {
 
 const ChatBox: React.FC<Props> = (props) => {
   const [accordionActive, setAccordionActive] = useState<boolean>(false);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [inviteCodeCopied, setInviteCodeCopied] = useState<boolean>(false);
+  const [invitationTextCopied, setInvitationTextCopied] = useState<boolean>(
+    false
+  );
   const currentRoom = props.room;
   const chatMessageList = props.chatMessageList;
   const socketValue = props.socket;
@@ -63,10 +79,7 @@ const ChatBox: React.FC<Props> = (props) => {
       user: props.user,
     });
 
-    console.log("here");
-
     socket.on("createdNewRoom", (data: any) => {
-      console.log("created new room=", data);
       socket.emit("joinChatRoom", {
         user: props.user,
         room: data,
@@ -108,7 +121,6 @@ const ChatBox: React.FC<Props> = (props) => {
 
   const handleJoinViaCode = (event: React.FormEvent<HTMLFormElement> | any) => {
     const inviteCode = event.target.inviteCodeInputField.value;
-    console.log("in handle-", inviteCode, props.user, avatarInfo);
     socket.emit("joinRoomViaInviteCode", {
       inviteCode,
       user: props.user,
@@ -120,8 +132,87 @@ const ChatBox: React.FC<Props> = (props) => {
     });
   };
 
+  const invitationMessage = () => {
+    return `Come join me on Kollab Space at ${window.location.href}.\nJoin my chatroom using these credentials :-\nID : ${currentRoom?.name} \nPassword: ${currentRoom?.password}`;
+  };
+
   return (
     <div style={ChatBoxStyle}>
+      <Modal
+        dimmer={"blurring"}
+        open={modalIsOpen}
+        onClose={() => {
+          setModalIsOpen(false);
+        }}
+      >
+        <Modal.Header>Invite your friends</Modal.Header>
+        <Modal.Content>
+          <Header as="h4">Invite via credentials</Header>
+          <label>Share this message with your friends</label>
+          <br />
+          <Grid>
+            <Grid.Column width="10">
+              <Form>
+                <TextArea
+                  defaultValue={invitationMessage()}
+                  readOnly
+                  rows={3}
+                />
+              </Form>
+            </Grid.Column>
+            <Grid.Column>
+              <Button
+                color="teal"
+                icon="copy"
+                onClick={() => {
+                  setInvitationTextCopied(true);
+                  setInviteCodeCopied(false);
+                  navigator.clipboard.writeText(invitationMessage());
+                }}
+              >
+                Copy
+              </Button>
+              {invitationTextCopied && (
+                <Label basic color="green" pointing="above">
+                  Copied
+                </Label>
+              )}
+            </Grid.Column>
+          </Grid>
+
+          <Header as="h4">Invite via Code</Header>
+          <label>Share this invitation code with your friends : &nbsp; </label>
+          <Input action defaultValue={currentRoom?.inviteCode} readOnly>
+            <input readOnly />
+            <Button
+              color="teal"
+              icon="copy"
+              onClick={() => {
+                setInviteCodeCopied(true);
+                setInvitationTextCopied(false);
+                navigator.clipboard.writeText(currentRoom?.inviteCode || "");
+              }}
+            >
+              Copy
+            </Button>
+          </Input>
+          {inviteCodeCopied && (
+            <Label basic color="green" pointing="left">
+              Copied
+            </Label>
+          )}
+        </Modal.Content>
+        <Modal.Actions>
+          <Button
+            negative
+            onClick={() => {
+              setModalIsOpen(false);
+            }}
+          >
+            Close
+          </Button>
+        </Modal.Actions>
+      </Modal>
       {props.user && !currentRoom && (
         <div
           style={{
@@ -212,7 +303,13 @@ const ChatBox: React.FC<Props> = (props) => {
             </Card.Content>
             <Card.Content extra>
               <div className="ui two buttons">
-                <Button basic color="green">
+                <Button
+                  basic
+                  color="green"
+                  onClick={() => {
+                    setModalIsOpen(true);
+                  }}
+                >
                   Invite
                 </Button>
                 <Button basic color="red" onClick={handleLeaveChatRoom}>
@@ -229,7 +326,6 @@ const ChatBox: React.FC<Props> = (props) => {
               {chatMessageList.map((item) => {
                 if (item.type === "event") {
                   const { timestamp, eventMessage, avatarInfo } = item;
-                  console.log(avatarInfo);
                   let avatar: any;
                   const { gender, id } = avatarInfo;
                   if (gender[0] == "M") {
