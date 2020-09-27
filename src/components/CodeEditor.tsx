@@ -52,8 +52,8 @@ interface Props {
 }
 
 const CodeEditor: React.FC<Props> = (props) => {
-  const [code, setCode] = useState<string>("function print(x){console.log(x)}");
-  const [editorLanguage, setEditorLanguage] = useState<string>("java");
+  const [code, setCode] = useState<string>("");
+  const [editorLanguage, setEditorLanguage] = useState<string>("javascript");
   const [editorTheme, setEditorTheme] = useState<string>("monokai");
   const [editorFontSize, setEditorFontSize] = useState<number>(18);
   const [enableAutocomplete, setEnableAutocomplete] = useState<boolean>(true);

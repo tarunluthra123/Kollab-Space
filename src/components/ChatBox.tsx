@@ -264,11 +264,18 @@ const ChatBox: React.FC<Props> = (props) => {
                 <Button type="submit">Submit</Button>
               </Form>
               <br />
-              OR
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <b>OR</b>
+              </div>
               <br />
               <Form onSubmit={handleJoinViaCode}>
                 <Form.Field>
-                  <label>Invite Code : </label>
+                  <label>Enter Invite Code : </label>
                   <input
                     placeholder="Invitation Code"
                     type="text"
