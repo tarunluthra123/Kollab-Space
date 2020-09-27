@@ -64,7 +64,6 @@ const MainPage: React.FC<Props> = (props) => {
     });
 
     socket.on("roomJoinNotification", (data: RoomJoinNotification) => {
-      console.log("in room join notification");
       const notification = data.notification;
       if (notification === "New Participant") {
         const newUser: UserInfo = data.user;
@@ -83,7 +82,9 @@ const MainPage: React.FC<Props> = (props) => {
         }
       } else if (notification === "Participant Left") {
         const oldUser: UserInfo = data.user;
-        console.log(oldUser.name + " left the chat.");
+        const { avatarInfo } = data;
+        console.log("leaving", data);
+        addFeedEventToChat(oldUser.name + " left the chat.", avatarInfo);
       }
     });
 
@@ -115,6 +116,15 @@ const MainPage: React.FC<Props> = (props) => {
     setChatMessageList([...chatMessageList, comment]);
   };
 
+  const leaveChatRoom = (avatarInfo: { id: number; gender: string }) => {
+    socket.emit("leaveChatRoom", {
+      user: props.user,
+      room: currentRoom,
+      avatarInfo,
+    });
+    setCurrentRoom(null);
+  };
+
   return (
     <div>
       <Router>
@@ -126,6 +136,7 @@ const MainPage: React.FC<Props> = (props) => {
               room={currentRoom}
               chatMessageList={chatMessageList}
               logoutUser={props.logoutUser}
+              leaveChatRoom={leaveChatRoom}
             />
           </Route>
           <Route exact path="/about" component={About}>

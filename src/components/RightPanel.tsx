@@ -18,6 +18,7 @@ interface Props {
   socket: SocketIOClient.Socket | null;
   room: RoomDetails | null;
   chatMessageList: Array<any>;
+  leaveChatRoom: (avatarInfo: { id: number; gender: string }) => void;
 }
 
 const RightPanel: React.FC<Props> = (props) => {
@@ -28,6 +29,7 @@ const RightPanel: React.FC<Props> = (props) => {
         socket={props.socket}
         room={props.room}
         chatMessageList={props.chatMessageList}
+        leaveChatRoom={props.leaveChatRoom}
       />
     </div>
   );

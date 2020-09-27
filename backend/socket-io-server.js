@@ -77,6 +77,17 @@ exports = module.exports = function (server) {
       }
     });
 
+    socket.on("leaveChatRoom", (data) => {
+      const { user, room, avatarInfo } = data;
+      console.log("leaving room", data);
+      io.to(room.name).emit("roomJoinNotification", {
+        notification: "Participant Left",
+        user,
+        avatarInfo,
+        room,
+      });
+    });
+
     socket.on("codeChange", (data) => {
       if (data.room && data.room.name)
         io.to(data.room.name).emit("codeUpdate", {

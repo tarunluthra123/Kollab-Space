@@ -22,6 +22,7 @@ interface Props {
   room: RoomDetails | null;
   chatMessageList: Array<any>;
   logoutUser: () => void;
+  leaveChatRoom: (avatarInfo: { id: number; gender: string }) => void;
 }
 
 const HomePage: React.FC<Props> = (props) => {
@@ -41,6 +42,7 @@ const HomePage: React.FC<Props> = (props) => {
             socket={props.socket}
             room={props.room}
             chatMessageList={props.chatMessageList}
+            leaveChatRoom={props.leaveChatRoom}
           />
         </Grid>
       </Grid>

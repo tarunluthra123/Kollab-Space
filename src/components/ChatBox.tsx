@@ -32,6 +32,7 @@ interface Props {
   socket: SocketIOClient.Socket | null;
   room: RoomDetails | null;
   chatMessageList: Array<any>;
+  leaveChatRoom: (avatarInfo: { id: number; gender: string }) => void;
 }
 
 const ChatBox: React.FC<Props> = (props) => {
@@ -98,6 +99,10 @@ const ChatBox: React.FC<Props> = (props) => {
       avatarInfo,
     });
     event.target.chatInputBox.value = "";
+  };
+
+  const handleLeaveChatRoom = () => {
+    props.leaveChatRoom(avatarInfo);
   };
 
   return (
@@ -181,7 +186,7 @@ const ChatBox: React.FC<Props> = (props) => {
                 <Button basic color="green">
                   Invite
                 </Button>
-                <Button basic color="red">
+                <Button basic color="red" onClick={handleLeaveChatRoom}>
                   Leave
                 </Button>
               </div>
