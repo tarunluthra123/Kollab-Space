@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, Card, Feed } from "semantic-ui-react";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Card, Feed, FormProps } from "semantic-ui-react";
 import CSS from "csstype";
 import { Accordion, Form, Comment, Segment } from "semantic-ui-react";
 
@@ -25,6 +25,7 @@ interface UserInfo {
 interface RoomDetails {
   name: string;
   password: string;
+  inviteCode: string;
 }
 
 interface Props {
@@ -65,7 +66,7 @@ const ChatBox: React.FC<Props> = (props) => {
     console.log("here");
 
     socket.on("createdNewRoom", (data: any) => {
-      console.log(data);
+      console.log("created new room=", data);
       socket.emit("joinChatRoom", {
         user: props.user,
         room: data,
@@ -103,6 +104,20 @@ const ChatBox: React.FC<Props> = (props) => {
 
   const handleLeaveChatRoom = () => {
     props.leaveChatRoom(avatarInfo);
+  };
+
+  const handleJoinViaCode = (event: React.FormEvent<HTMLFormElement> | any) => {
+    const inviteCode = event.target.inviteCodeInputField.value;
+    console.log("in handle-", inviteCode, props.user, avatarInfo);
+    socket.emit("joinRoomViaInviteCode", {
+      inviteCode,
+      user: props.user,
+      avatarInfo,
+    });
+
+    socket.on("Invalid room invite code", (data: any) => {
+      alert("Invalid room invite code");
+    });
   };
 
   return (
@@ -156,6 +171,20 @@ const ChatBox: React.FC<Props> = (props) => {
                   />
                 </Form.Field>
                 <Button type="submit">Submit</Button>
+              </Form>
+              <br />
+              OR
+              <br />
+              <Form onSubmit={handleJoinViaCode}>
+                <Form.Field>
+                  <label>Invite Code : </label>
+                  <input
+                    placeholder="Invitation Code"
+                    type="text"
+                    name="inviteCodeInputField"
+                  />
+                </Form.Field>
+                <Button type="submit">Join via Code</Button>
               </Form>
             </Accordion.Content>
           </Accordion>

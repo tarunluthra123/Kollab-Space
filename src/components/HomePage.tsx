@@ -14,6 +14,7 @@ interface UserInfo {
 interface RoomDetails {
   name: string;
   password: string;
+  inviteCode: string;
 }
 
 interface Props {

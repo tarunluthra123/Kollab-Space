@@ -89,7 +89,7 @@ const SignupPage: React.FC<Props> = (props) => {
     const userObject = {
       name: userInfo.firstName + " " + userInfo.lastName,
       password: userInfo.password,
-      gender: userInfo.gender,
+      gender: userInfo.gender[0],
       username: userInfo.username,
     };
     Axios.post("api/signup", userObject)

@@ -18,6 +18,7 @@ interface UserInfo {
 interface RoomDetails {
   name: string;
   password: string;
+  inviteCode: string;
 }
 
 interface RoomJoinNotification {
@@ -64,6 +65,7 @@ const MainPage: React.FC<Props> = (props) => {
     });
 
     socket.on("roomJoinNotification", (data: RoomJoinNotification) => {
+      console.log("room join notification", data);
       const notification = data.notification;
       if (notification === "New Participant") {
         const newUser: UserInfo = data.user;
@@ -72,19 +74,21 @@ const MainPage: React.FC<Props> = (props) => {
           setCurrentRoom({
             name: data.room.name,
             password: data.room.password,
+            inviteCode: data.room.inviteCode,
           });
+          console.log("code=", data.room.inviteCode);
         } else {
           const { avatarInfo } = data;
+          console.log(data);
           addFeedEventToChat(
             newUser.name + " has joined the chatroom.",
             avatarInfo
           );
         }
       } else if (notification === "Participant Left") {
-        const oldUser: UserInfo = data.user;
-        const { avatarInfo } = data;
+        const { avatarInfo, user: oldUser } = data;
         console.log("leaving", data);
-        addFeedEventToChat(oldUser.name + " left the chat.", avatarInfo);
+        addFeedEventToChat(oldUser.name + " left the chatroom.", avatarInfo);
       }
     });
 

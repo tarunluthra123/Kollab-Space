@@ -6,10 +6,12 @@ const verifyUserWithToken = async (token, name) => {
   return decoded.name === name;
 };
 
-const randomStringGenerator = (length = 5) => {
+const randomStringGenerator = (length = 4, useOnlyCapitals = true) => {
   let result = "";
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  if (!useOnlyCapitals) {
+    characters += "abcdefghijklmnopqrstuvwxyz0123456789";
+  }
   const charactersLength = characters.length;
   for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -17,16 +19,28 @@ const randomStringGenerator = (length = 5) => {
   return result;
 };
 
-const chatRooms = new Map();
+const chatRooms = new Map(); //{name:password}
+const chatRoomsInviteCodes = new Map(); //{inviteCode : {name,password}}
+const chatRoomsInviteSecrets = new Map(); // {{name,password} : inviteCode}
 
 const generateNewRoom = () => {
   let roomName = randomStringGenerator();
   while (chatRooms.has(roomName)) {
     roomName = randomStringGenerator();
   }
-  let roomPassword = randomStringGenerator();
+  const roomPassword = randomStringGenerator();
   chatRooms.set(roomName, roomPassword);
-  return { roomName, roomPassword };
+
+  let roomInviteCode = randomStringGenerator(5, false);
+  if (chatRoomsInviteCodes.has(roomInviteCode)) {
+    roomInviteCode = randomStringGenerator(5, false);
+  }
+  chatRoomsInviteCodes.set(roomInviteCode, { roomName, roomPassword });
+  chatRoomsInviteSecrets.set(
+    JSON.stringify({ roomName, roomPassword }),
+    roomInviteCode
+  );
+  return { roomName, roomPassword, roomInviteCode };
 };
 
 exports = module.exports = function (server) {
@@ -50,7 +64,7 @@ exports = module.exports = function (server) {
     });
 
     socket.on("joinChatRoom", async (data) => {
-      console.log("in join chat room = ", data);
+      // console.log("in join chat room = ", data);
       const user = data.user;
       const verified = await verifyUserWithToken(user.token, user.name);
       if (verified) {
@@ -60,9 +74,16 @@ exports = module.exports = function (server) {
           if (correctPassword === roomPassword) {
             socket.join(roomName);
             const { avatarInfo } = data;
+            const inviteCode = chatRoomsInviteSecrets.get(
+              JSON.stringify({
+                roomName,
+                roomPassword,
+              })
+            );
+
             io.to(roomName).emit("roomJoinNotification", {
               notification: "New Participant",
-              room: { name: roomName, password: roomPassword },
+              room: { name: roomName, password: roomPassword, inviteCode },
               user,
               avatarInfo,
             });
@@ -71,6 +92,29 @@ exports = module.exports = function (server) {
           }
         } else {
           socket.emit("Room does not exist");
+        }
+      } else {
+        socket.emit("Invalid user");
+      }
+    });
+
+    socket.on("joinRoomViaInviteCode", async (data) => {
+      const { user, inviteCode, avatarInfo } = data;
+      const verified = await verifyUserWithToken(user.token, user.name);
+      if (verified) {
+        if (chatRoomsInviteCodes.has(inviteCode)) {
+          const { roomName, roomPassword } = chatRoomsInviteCodes.get(
+            inviteCode
+          );
+          socket.join(roomName);
+          io.to(roomName).emit("roomJoinNotification", {
+            notification: "New Participant",
+            room: { name: roomName, password: roomPassword, inviteCode },
+            user,
+            avatarInfo,
+          });
+        } else {
+          socket.emit("Invalid room invite code");
         }
       } else {
         socket.emit("Invalid user");
