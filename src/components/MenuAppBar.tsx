@@ -8,7 +8,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import { Link, HashRouter as Router } from "react-router-dom";
-import { Button, Dropdown, Header } from "semantic-ui-react";
+import { Button, Dropdown } from "semantic-ui-react";
 import KollabSpaceLogo from "../assets/kollab_space_logo.png";
 
 const useStyles = makeStyles((theme: Theme) =>

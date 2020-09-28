@@ -92,6 +92,14 @@ const LoginPage: React.FC<Props> = (props) => {
   };
 
   const handleLogin = () => {
+    if (userIdPass.username.length === 0) {
+      alert("Username cannot be empty");
+      return;
+    }
+    if (userIdPass.password.length === 0) {
+      alert("Password cannot be empty");
+      return;
+    }
     Axios.post("/api/login", userIdPass)
       .then((res) => res.data)
       .then((res) => {

@@ -15,7 +15,7 @@ route.post("/", async (req, res) => {
       },
     });
     if (result) {
-      res.send({ errors: "Username already taken" });
+      res.send({ error: "Username already taken" });
     } else {
       const userObject = {
         name: req.body.name,

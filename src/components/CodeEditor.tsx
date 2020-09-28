@@ -57,6 +57,7 @@ const CodeEditor: React.FC<Props> = (props) => {
   const [editorTheme, setEditorTheme] = useState<string>("monokai");
   const [editorFontSize, setEditorFontSize] = useState<number>(18);
   const [enableAutocomplete, setEnableAutocomplete] = useState<boolean>(true);
+  const [lastCursorUpdate, setLastCursorUpdate] = useState({ r: -1, c: -1 });
   const editorRef: any = useRef();
   const socketValue = props.socket;
   const currentRoom = props.room;
@@ -75,6 +76,7 @@ const CodeEditor: React.FC<Props> = (props) => {
         if (editorRef) {
           const editor = editorRef.current.editor;
           editor.moveCursorToPosition(data.cursorPosition);
+          console.log("code update", data.cursorPosition);
         }
       });
 
@@ -82,9 +84,16 @@ const CodeEditor: React.FC<Props> = (props) => {
         if (editorRef) {
           const editor = editorRef.current.editor;
           const currentPosition = editor.getCursorPosition();
-          if (data == currentPosition) {
+          console.log("cursorUpdate", data, currentPosition);
+          if (
+            data.row === currentPosition.row &&
+            data.column === currentPosition.column
+          ) {
+            console.log("returning");
+
             return;
           }
+          setLastCursorUpdate({ r: data.row, c: data.column });
           editor.moveCursorToPosition(data);
         }
       });
@@ -93,7 +102,6 @@ const CodeEditor: React.FC<Props> = (props) => {
         const newLanguage = data.lang;
         if (editorLanguage === newLanguage) return;
         setEditorLanguage(newLanguage);
-        console.log("editorLang=", editorLanguage);
       });
     }
   });
@@ -125,12 +133,16 @@ const CodeEditor: React.FC<Props> = (props) => {
         lang: data.value,
         room: currentRoom,
       });
-      console.log(data.value, currentRoom);
     }
   };
 
   const handleCursorChange = (value: any, event?: any) => {
     const { row, column } = value.cursor;
+    console.log("last cursor", lastCursorUpdate);
+    if (lastCursorUpdate.r == row && lastCursorUpdate.c == column) {
+      console.log("match");
+      return;
+    }
     if (socket)
       socket.emit("cursorChange", {
         row,
@@ -185,14 +197,10 @@ const CodeEditor: React.FC<Props> = (props) => {
             </h3>
             <div style={{ margin: "0.7%" }}>
               Language : {` `}
-              {console.log("editorLanguage=", editorLanguage)}
               <Dropdown
                 selection
                 placeholder="Language"
-                defaultValue={selectedLanguageTag}
                 onChange={handleLanguageTagChange}
-                selectedLabel={selectedLanguageTag}
-                defaultSelectedLabel={selectedLanguageTag}
                 value={selectedLanguageTag}
                 options={[
                   {
@@ -303,7 +311,6 @@ const CodeEditor: React.FC<Props> = (props) => {
                   onChange={(e, d) => {
                     if (typeof d.checked == "boolean")
                       setEnableAutocomplete(d.checked);
-                    console.log(enableAutocomplete);
                   }}
                 />
               </div>

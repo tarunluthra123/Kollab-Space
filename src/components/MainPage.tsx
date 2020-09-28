@@ -50,23 +50,18 @@ const MainPage: React.FC<Props> = (props) => {
   let socket: SocketIOClient.Socket;
 
   useEffect(() => {
-    console.log("ENDPOINT=", ENDPOINT);
     if (socketValue === null) {
       socket = socketIOClient(ENDPOINT);
       setSocketValue(socket);
     } else {
       socket = socketValue;
     }
-    console.log("ok");
-    let counter = 0;
     socket.on("messageReceived", (data: ChatMessage) => {
       const { user, message, avatarInfo } = data;
       addMessageToChat(user, message, avatarInfo);
-      console.log(counter++);
     });
 
     socket.on("roomJoinNotification", (data: RoomJoinNotification) => {
-      console.log("room join notification", data);
       const notification = data.notification;
       if (notification === "New Participant") {
         const newUser: UserInfo = data.user;
@@ -77,10 +72,8 @@ const MainPage: React.FC<Props> = (props) => {
             password: data.room.password,
             inviteCode: data.room.inviteCode,
           });
-          console.log("code=", data.room.inviteCode);
         } else {
           const { avatarInfo } = data;
-          console.log(data);
           addFeedEventToChat(
             newUser.name + " has joined the chatroom.",
             avatarInfo
@@ -88,7 +81,6 @@ const MainPage: React.FC<Props> = (props) => {
         }
       } else if (notification === "Participant Left") {
         const { avatarInfo, user: oldUser } = data;
-        console.log("leaving", data);
         addFeedEventToChat(oldUser.name + " left the chatroom.", avatarInfo);
       }
     });

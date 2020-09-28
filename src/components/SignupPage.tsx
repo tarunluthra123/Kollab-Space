@@ -92,13 +92,25 @@ const SignupPage: React.FC<Props> = (props) => {
       gender: userInfo.gender[0],
       username: userInfo.username,
     };
+    if (userObject.name.length === 1) {
+      alert("Name cannot be empty");
+      return;
+    }
+    if (userObject.password.length === 0) {
+      alert("Password cannot be empty");
+      return;
+    }
+    if (userObject.username.length === 0) {
+      alert("Username cannot be empty");
+      return;
+    }
     Axios.post("api/signup", userObject)
       .then((res) => res.data)
       .then((res) => {
         if (res.error) {
           const err = res.error;
           console.error("Error = ", err);
-          alert(err.msg);
+          alert(err);
           return;
         } else {
           const token: string = res.data.token;

@@ -7,7 +7,6 @@ import {
   Header,
   Input,
   Label,
-  Message,
   Modal,
   TextArea,
 } from "semantic-ui-react";
@@ -335,7 +334,7 @@ const ChatBox: React.FC<Props> = (props) => {
                   const { timestamp, eventMessage, avatarInfo } = item;
                   let avatar: any;
                   const { gender, id } = avatarInfo;
-                  if (gender[0] == "M") {
+                  if (gender[0] === "M") {
                     avatar = require("../assets/male_avatars/" + id + ".svg");
                   } else {
                     avatar = require("../assets/female_avatars/" + id + ".svg");
@@ -363,7 +362,7 @@ const ChatBox: React.FC<Props> = (props) => {
                   const { user, timestamp, message, avatarInfo } = item;
                   const { gender, id } = avatarInfo;
                   let avatar: any;
-                  if (gender[0] == "M") {
+                  if (gender[0] === "M") {
                     avatar = require("../assets/male_avatars/" + id + ".svg");
                   } else {
                     avatar = require("../assets/female_avatars/" + id + ".svg");

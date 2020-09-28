@@ -64,7 +64,6 @@ exports = module.exports = function (server) {
     });
 
     socket.on("joinChatRoom", async (data) => {
-      // console.log("in join chat room = ", data);
       const user = data.user;
       const verified = await verifyUserWithToken(user.token, user.name);
       if (verified) {
@@ -123,7 +122,6 @@ exports = module.exports = function (server) {
 
     socket.on("leaveChatRoom", (data) => {
       const { user, room, avatarInfo } = data;
-      console.log("leaving room", data);
       io.to(room.name).emit("roomJoinNotification", {
         notification: "Participant Left",
         user,
@@ -134,7 +132,7 @@ exports = module.exports = function (server) {
 
     socket.on("codeChange", (data) => {
       if (data.room && data.room.name)
-        io.to(data.room.name).emit("codeUpdate", {
+        socket.to(data.room.name).emit("codeUpdate", {
           code: data.code,
           cursorPosition: data.cursorPosition,
         });
@@ -142,7 +140,7 @@ exports = module.exports = function (server) {
 
     socket.on("cursorChange", (data) => {
       if (data.room && data.room.name)
-        io.to(data.room.name).emit("cursorPositionUpdate", {
+        socket.to(data.room.name).emit("cursorPositionUpdate", {
           row: data.row,
           column: data.column,
         });
