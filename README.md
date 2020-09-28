@@ -2,7 +2,7 @@
 
 A collaborative work environment for teams and friends to work together with increased productivity in sophisticated environment.
 
-The project has been deployed on Heroku and can be viewed [here]('#').
+The project has been deployed on Heroku and can be viewed [here]('https://kollab-space.herokuapp.com/').
 
 ### About the project
 

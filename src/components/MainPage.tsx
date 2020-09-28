@@ -6,7 +6,7 @@ import LoginPage from "./LoginPage";
 import SignupPage from "./SignupPage";
 import socketIOClient from "socket.io-client";
 
-const ENDPOINT = "http://127.0.0.1:5000";
+const ENDPOINT = process.env.REACT_APP_WEBSITE_URL || "http://127.0.0.1:5000";
 
 interface UserInfo {
   token: string;
@@ -50,6 +50,7 @@ const MainPage: React.FC<Props> = (props) => {
   let socket: SocketIOClient.Socket;
 
   useEffect(() => {
+    console.log("ENDPOINT=", ENDPOINT);
     if (socketValue === null) {
       socket = socketIOClient(ENDPOINT);
       setSocketValue(socket);
