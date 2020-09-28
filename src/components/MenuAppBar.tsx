@@ -7,9 +7,9 @@ import IconButton from "@material-ui/core/IconButton";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-import CSS from "csstype";
 import { Link, HashRouter as Router } from "react-router-dom";
 import { Button, Dropdown, Header } from "semantic-ui-react";
+import KollabSpaceLogo from "../assets/kollab_space_logo.png";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,11 +24,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-
-const h1Styling: CSS.Properties = {
-  paddingRight: "1%",
-  textDecoration: "none",
-};
 
 interface UserInfo {
   token: string;
@@ -45,18 +40,7 @@ interface Props {
 const MenuAppBar: React.FC<Props> = (props: Props) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [navMenuAnchorEl, setNavMenuAnchorEl] = useState<null | HTMLElement>(
-    null
-  );
   const open = Boolean(anchorEl);
-
-  const handleNavMenuAnchorElOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setNavMenuAnchorEl(event.currentTarget);
-  };
-
-  const handleNavMenuAnchorElClose = () => {
-    setNavMenuAnchorEl(null);
-  };
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -95,7 +79,13 @@ const MenuAppBar: React.FC<Props> = (props: Props) => {
             <Typography variant="h6" className={classes.title}>
               {props.pageTitle}
             </Typography>
-            <h1 style={h1Styling}>
+            <img src={KollabSpaceLogo} alt="Logo" height="50" />
+            <h1
+              style={{
+                paddingRight: "1%",
+                textDecoration: "none",
+              }}
+            >
               <a href="/" style={{ color: "white" }}>
                 Kollab Space
               </a>
