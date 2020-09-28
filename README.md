@@ -68,7 +68,7 @@ This should run your backend server on localhost:5000. To choose any other port,
 In the second terminal, run the frontend development server.
 
 ```
-yarn start
+yarn react
 ```
 
 This will run your frontend on localhost:3000.

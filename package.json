@@ -34,12 +34,13 @@
     "typescript": "^4.0.3"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "react": "react-scripts start",
+    "start": "node backend/server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "nodemon backend/server.js",
-    "backend": "node backend/server.js"
+    "heroku-postbuild": "yarn build"
   },
   "proxy": "http://localhost:5000/",
   "eslintConfig": {
