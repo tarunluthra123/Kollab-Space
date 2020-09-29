@@ -2,7 +2,7 @@
 
 A collaborative work environment for teams and friends to work together with increased productivity in sophisticated environment.
 
-The project has been deployed on Heroku and can be viewed [here]('https://kollab-space.herokuapp.com/').
+The project has been deployed on Heroku and can be viewed [here](https://kollab-space.herokuapp.com/).
 
 ### About the project
 
@@ -20,6 +20,14 @@ Users can also edit code in the code editor which allows multiple language suppo
 <li>Semantic UI CSS
 <li>JSON Web Tokens
 </ul>
+
+### Demo and Screenshots
+
+[![DEMO VIDEO](http://img.youtube.com/vi/dYy2w2OEJ4Q/0.jpg)](http://www.youtube.com/watch?v=dYy2w2OEJ4Q "Kollab Space - Demo Video")
+
+![alt-text](./screenshots/homepage.jpg "Home Page")
+![alt-text](./screenshots/signup.jpg "Signup page")
+![alt-text](./screenshots/login.jpg "Login Page")
 
 ### Setting up the project
 
