@@ -131,11 +131,13 @@ exports = module.exports = function (server) {
     });
 
     socket.on("codeChange", (data) => {
-      if (data.room && data.room.name)
+      if (data.room && data.room.name) {
         socket.to(data.room.name).emit("codeUpdate", {
           code: data.code,
           cursorPosition: data.cursorPosition,
+          user: data.user,
         });
+      }
     });
 
     socket.on("cursorChange", (data) => {

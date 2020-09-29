@@ -58,6 +58,7 @@ const CodeEditor: React.FC<Props> = (props) => {
   const [editorFontSize, setEditorFontSize] = useState<number>(18);
   const [enableAutocomplete, setEnableAutocomplete] = useState<boolean>(true);
   const [lastCursorUpdate, setLastCursorUpdate] = useState({ r: -1, c: -1 });
+  const [recentlyUpdatedCode, setRecentlyUpdatedCode] = useState(false);
   const editorRef: any = useRef();
   const socketValue = props.socket;
   const currentRoom = props.room;
@@ -72,11 +73,12 @@ const CodeEditor: React.FC<Props> = (props) => {
       socket.on("codeUpdate", (data: any) => {
         const newCode = data.code;
         if (newCode == code) return;
+        if (data.user?.username == props.user?.username) return;
         setCode(newCode);
-        if (editorRef) {
+        setRecentlyUpdatedCode(true);
+        if (data.cursorPosition && editorRef) {
           const editor = editorRef.current.editor;
           editor.moveCursorToPosition(data.cursorPosition);
-          console.log("code update", data.cursorPosition);
         }
       });
 
@@ -84,13 +86,10 @@ const CodeEditor: React.FC<Props> = (props) => {
         if (editorRef) {
           const editor = editorRef.current.editor;
           const currentPosition = editor.getCursorPosition();
-          console.log("cursorUpdate", data, currentPosition);
           if (
             data.row === currentPosition.row &&
             data.column === currentPosition.column
           ) {
-            console.log("returning");
-
             return;
           }
           setLastCursorUpdate({ r: data.row, c: data.column });
@@ -112,15 +111,18 @@ const CodeEditor: React.FC<Props> = (props) => {
 
   const onChange = (codeValue: string, event: any) => {
     if (codeValue == code) return;
+    if (recentlyUpdatedCode) return;
+    setRecentlyUpdatedCode(false);
     const cursorPosition = event.end;
     setCode(codeValue);
-    if (socket)
+    if (socket) {
       socket.emit("codeChange", {
         code: codeValue,
         user: props.user,
         room: currentRoom,
         cursorPosition,
       });
+    }
   };
 
   const handleLanguageTagChange = (
@@ -138,9 +140,7 @@ const CodeEditor: React.FC<Props> = (props) => {
 
   const handleCursorChange = (value: any, event?: any) => {
     const { row, column } = value.cursor;
-    console.log("last cursor", lastCursorUpdate);
     if (lastCursorUpdate.r == row && lastCursorUpdate.c == column) {
-      console.log("match");
       return;
     }
     if (socket)
