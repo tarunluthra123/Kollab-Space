@@ -7,7 +7,7 @@ The project has been deployed on Heroku and can be viewed [here](https://kollab-
 ### About the project
 
 Users can signup, login, join chat rooms and live chat with their friends.<br>
-Users can also edit code in the code editor which allows multiple language support with autocompletion feature and all changes are reflected to all other users in the chat room.
+Users can also edit code in the code editor which allows multiple language support with autocompletion feature and all changes are reflected to all other users in the chat room synchronously.
 
 ### Tools and Technologies used
 
@@ -21,9 +21,11 @@ Users can also edit code in the code editor which allows multiple language suppo
 <li>JSON Web Tokens
 </ul>
 
-### Demo and Screenshots
+### Demo Video
 
 [![DEMO VIDEO](http://img.youtube.com/vi/dYy2w2OEJ4Q/0.jpg)](http://www.youtube.com/watch?v=dYy2w2OEJ4Q "Kollab Space - Demo Video")
+
+### Screenshots
 
 ![alt-text](./screenshots/homepage.jpg "Home Page")
 ![alt-text](./screenshots/signup.jpg "Signup page")
