@@ -76,16 +76,16 @@ const CodeEditor: React.FC<Props> = (props) => {
         if (data.user?.username == props.user?.username) return;
         setCode(newCode);
         setRecentlyUpdatedCode(true);
-        if (data.cursorPosition && editorRef) {
+        if (data.cursorPosition && editorRef && editorRef.current) {
           const editor = editorRef.current.editor;
           editor.moveCursorToPosition(data.cursorPosition);
         }
       });
 
       socket.on("cursorPositionUpdate", (data: any) => {
-        if (editorRef) {
+        if (editorRef && editorRef.current) {
           const editor = editorRef.current.editor;
-          const currentPosition = editor.getCursorPosition();
+          const currentPosition = editor?.getCursorPosition();
           if (
             data.row === currentPosition.row &&
             data.column === currentPosition.column
@@ -93,7 +93,7 @@ const CodeEditor: React.FC<Props> = (props) => {
             return;
           }
           setLastCursorUpdate({ r: data.row, c: data.column });
-          editor.moveCursorToPosition(data);
+          editor?.moveCursorToPosition(data);
         }
       });
 
