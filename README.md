@@ -1,5 +1,8 @@
 # Kollab Space
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![npm](https://img.shields.io/npm/v/package) ![total-lines](https://img.shields.io/tokei/lines/github/tarunluthra123/Kollab-Space) ![node](https://img.shields.io/node/v/package)
+
+
 A collaborative work environment for teams and friends to work together with increased productivity in sophisticated environment.
 
 The project has been deployed on Heroku and can be viewed [here](https://kollab-space.herokuapp.com/).

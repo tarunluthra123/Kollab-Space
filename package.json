@@ -62,5 +62,6 @@
     "@types/react-router-dom": "^5.1.5",
     "dotenv": "^8.2.0",
     "nodemon": "^2.0.4"
-  }
+  },
+  "license": "MIT"
 }
