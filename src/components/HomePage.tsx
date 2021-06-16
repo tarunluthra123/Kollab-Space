@@ -1,8 +1,8 @@
 import React from "react";
-import LeftPanel from "./LeftPanel";
-import RightPanel from "./RightPanel";
+import ChatBox from "./ChatBox";
 import Layout from "./Layout";
 import { Grid } from "@material-ui/core";
+import CodeEditor from "./CodeEditor";
 
 interface UserInfo {
   token: string;
@@ -31,14 +31,14 @@ const HomePage: React.FC<Props> = (props) => {
     <Layout pageTitle="Home" user={props.user} logoutUser={props.logoutUser}>
       <Grid container spacing={2}>
         <Grid item xs={9}>
-          <LeftPanel
+          <CodeEditor
             user={props.user}
             socket={props.socket}
             room={props.room}
           />
         </Grid>
         <Grid item xs={3}>
-          <RightPanel
+          <ChatBox
             user={props.user}
             socket={props.socket}
             room={props.room}

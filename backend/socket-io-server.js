@@ -48,7 +48,9 @@ exports = module.exports = function (server) {
   chatRooms.set("abc", "def"); //For testing purposes
 
   io.on("connection", (socket) => {
+    console.log("New socket");
     socket.on("messageReceived", (data) => {
+      console.log("message received");
       io.to(data.room.name).emit("messageReceived", data);
     });
 
@@ -102,9 +104,8 @@ exports = module.exports = function (server) {
       const verified = await verifyUserWithToken(user.token, user.name);
       if (verified) {
         if (chatRoomsInviteCodes.has(inviteCode)) {
-          const { roomName, roomPassword } = chatRoomsInviteCodes.get(
-            inviteCode
-          );
+          const { roomName, roomPassword } =
+            chatRoomsInviteCodes.get(inviteCode);
           socket.join(roomName);
           io.to(roomName).emit("roomJoinNotification", {
             notification: "New Participant",

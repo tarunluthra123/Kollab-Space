@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Button,
   Card,
@@ -50,27 +50,23 @@ const ChatBox: React.FC<Props> = (props) => {
   const [accordionActive, setAccordionActive] = useState<boolean>(false);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [inviteCodeCopied, setInviteCodeCopied] = useState<boolean>(false);
-  const [invitationTextCopied, setInvitationTextCopied] = useState<boolean>(
-    false
-  );
+  const [invitationTextCopied, setInvitationTextCopied] =
+    useState<boolean>(false);
   const currentRoom = props.room;
   const chatMessageList = props.chatMessageList;
   const socketValue = props.socket;
 
   let socket: SocketIOClient.Socket;
-  let avatarInfo: { gender: string; id: number };
+  const gender = props?.user?.gender || "";
+  const avatarInfo: { gender: string; id: number } = useMemo(() => {
+    return {
+      gender,
+      id: ICON_NUMBER || -1,
+    };
+  }, [gender]);
 
   useEffect(() => {
     if (socketValue) socket = socketValue;
-  });
-
-  useEffect(() => {
-    if (props.user && props.user.gender) {
-      avatarInfo = {
-        gender: props.user.gender,
-        id: ICON_NUMBER,
-      };
-    }
   });
 
   const handleCreateRoom = () => {
@@ -330,6 +326,7 @@ const ChatBox: React.FC<Props> = (props) => {
           >
             <Comment.Group>
               {chatMessageList.map((item) => {
+                console.log({ item });
                 if (item.type === "event") {
                   const { timestamp, eventMessage, avatarInfo } = item;
                   let avatar: any;
@@ -341,7 +338,7 @@ const ChatBox: React.FC<Props> = (props) => {
                   }
 
                   return (
-                    <Feed>
+                    <Feed key={timestamp.getSeconds()}>
                       <Feed.Event>
                         <Feed.Label image={avatar} alt={"img"} />
                         <Feed.Content
@@ -368,7 +365,7 @@ const ChatBox: React.FC<Props> = (props) => {
                     avatar = require("../assets/female_avatars/" + id + ".svg");
                   }
                   return (
-                    <Comment>
+                    <Comment key={timestamp.getSeconds()}>
                       <Comment.Avatar as="a" src={avatar} alt={"img"} />
                       <Comment.Content>
                         <Comment.Author>{user.name}</Comment.Author>
@@ -387,10 +384,11 @@ const ChatBox: React.FC<Props> = (props) => {
                 }
               })}
             </Comment.Group>
-            <Form reply onSubmit={sendChatMessage}>
+            <Form reply onSubmit={sendChatMessage} autocomplete="off">
               <Form.Input
                 placeholder="Type your message here"
                 name="chatInputBox"
+                autocomplete="off"
               />
               <Button
                 content="Send"

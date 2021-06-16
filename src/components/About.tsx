@@ -46,6 +46,7 @@ const About: React.FC<Props> = (props) => {
           <a
             href={"https://github.com/tarunluthra123/Kollab-Space"}
             target={"_blank"}
+            rel="noopener noreferrer"
           >
             <Button color="olive">Project repository</Button>
           </a>
@@ -68,14 +69,22 @@ const About: React.FC<Props> = (props) => {
           <br />
           <img src={MailIcon} alt={"Mail"} width={30} />
           {"  "}
-          <a href={"mailto:tarunluthra987@gmail.com"} target={"_blank"}>
+          <a
+            href={"mailto:tarunluthra987@gmail.com"}
+            target={"_blank"}
+            rel="noopener noreferrer"
+          >
             tarunluthra987@gmail.com
           </a>
           <br />
           {/*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/}
           <img src={GithubIcon} alt={"Github"} width={30} />
           {"  "}
-          <a href={"https://github.com/tarunluthra123"} target={"_blank"}>
+          <a
+            href={"https://github.com/tarunluthra123"}
+            target={"_blank"}
+            rel="noopener noreferrer"
+          >
             tarunluthra123
           </a>
           <br />
@@ -84,6 +93,7 @@ const About: React.FC<Props> = (props) => {
           <a
             href={"https://www.linkedin.com/in/tarunluthra123/"}
             target={"_blank"}
+            rel="noopener noreferrer"
           >
             tarunluthra123
           </a>

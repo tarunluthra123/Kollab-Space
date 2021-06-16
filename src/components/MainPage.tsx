@@ -41,9 +41,8 @@ interface Props {
 }
 
 const MainPage: React.FC<Props> = (props) => {
-  const [socketValue, setSocketValue] = useState<SocketIOClient.Socket | null>(
-    null
-  );
+  const [socketValue, setSocketValue] =
+    useState<SocketIOClient.Socket | null>(null);
   const [currentRoom, setCurrentRoom] = useState<RoomDetails | null>(null);
   const [chatMessageList, setChatMessageList] = useState<Array<any>>([]);
 
@@ -56,13 +55,18 @@ const MainPage: React.FC<Props> = (props) => {
     } else {
       socket = socketValue;
     }
+  });
+
+  useEffect(() => {
     socket.on("messageReceived", (data: ChatMessage) => {
       const { user, message, avatarInfo } = data;
       addMessageToChat(user, message, avatarInfo);
+      console.log("message=", message);
     });
 
     socket.on("roomJoinNotification", (data: RoomJoinNotification) => {
       const notification = data.notification;
+      console.log(notification);
       if (notification === "New Participant") {
         const newUser: UserInfo = data.user;
         if (props.user?.token === newUser.token) {
