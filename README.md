@@ -5,7 +5,7 @@
 
 A collaborative work environment for teams and friends to work together with increased productivity in sophisticated environment.
 
-The project has been deployed on Heroku and can be viewed [here](https://kollab-space.herokuapp.com/).
+The project has been deployed on render.com and can be viewed [here](https://kollab-space.onrender.com/).
 
 ### About the project
 
@@ -76,7 +76,7 @@ In the first terminal, run the backend server.
 yarn server
 ```
 
-This should run your backend server on localhost:5000. To choose any other port, change the port number in backend/server.js.
+This should run your backend server on localhost:7483. To choose any other port, change the port number in backend/server.js.
 
 In the second terminal, run the frontend development server.
 

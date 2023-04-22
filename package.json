@@ -39,10 +39,9 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "server": "nodemon backend/server.js",
-        "heroku-postbuild": "yarn build"
+        "server": "nodemon backend/server.js"
     },
-    "proxy": "http://localhost:5000/",
+    "proxy": "http://localhost:7483/",
     "eslintConfig": {
         "extends": "react-app"
     },

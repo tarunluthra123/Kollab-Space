@@ -49,7 +49,7 @@ exports = module.exports = function (server) {
 
   io.on("connection", (socket) => {
     console.log("New socket");
-    socket.on("messageReceived", (data) => {
+    socket.on("newMessage", (data) => {
       console.log("message received");
       io.to(data.room.name).emit("messageReceived", data);
     });

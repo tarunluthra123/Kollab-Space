@@ -2,16 +2,19 @@ import React, { useEffect, useState, useMemo } from "react";
 import {
   Button,
   Card,
-  Feed,
   Grid,
   Header,
   Input,
   Label,
   Modal,
   TextArea,
+  Accordion,
+  Form,
+  Comment,
+  Segment
 } from "semantic-ui-react";
 import CSS from "csstype";
-import { Accordion, Form, Comment, Segment } from "semantic-ui-react";
+import Message from "./Message";
 
 const ICON_NUMBER = Math.ceil(Math.random() * 10);
 
@@ -101,7 +104,7 @@ const ChatBox: React.FC<Props> = (props) => {
     const message = event.target.chatInputBox.value;
     const user = props.user;
     const room = currentRoom;
-    socket.emit("messageReceived", {
+    socket.emit("newMessage", {
       user,
       message,
       room,
@@ -164,9 +167,7 @@ const ChatBox: React.FC<Props> = (props) => {
                   setInviteCodeCopied(false);
                   navigator.clipboard.writeText(invitationMessage());
                 }}
-              >
-                Copy
-              </Button>
+              />
               {invitationTextCopied && (
                 <Label basic color="green" pointing="above">
                   Copied
@@ -187,9 +188,7 @@ const ChatBox: React.FC<Props> = (props) => {
                 setInvitationTextCopied(false);
                 navigator.clipboard.writeText(currentRoom?.inviteCode || "");
               }}
-            >
-              Copy
-            </Button>
+            />
           </Input>
           {inviteCodeCopied && (
             <Label basic color="green" pointing="left">
@@ -326,69 +325,21 @@ const ChatBox: React.FC<Props> = (props) => {
           >
             <Comment.Group>
               {chatMessageList.map((item) => {
-                console.log({ item });
-                if (item.type === "event") {
-                  const { timestamp, eventMessage, avatarInfo } = item;
-                  let avatar: any;
-                  const { gender, id } = avatarInfo;
-                  if (gender[0] === "M") {
-                    avatar = require("../assets/male_avatars/" + id + ".svg");
-                  } else {
-                    avatar = require("../assets/female_avatars/" + id + ".svg");
-                  }
-
-                  return (
-                    <Feed key={timestamp.getSeconds()}>
-                      <Feed.Event>
-                        <Feed.Label image={avatar} alt={"img"} />
-                        <Feed.Content
-                          date={
-                            (timestamp.getHours() % 12) +
-                            ":" +
-                            (timestamp.getMinutes() <= 9 ? "0" : "") +
-                            timestamp.getMinutes() +
-                            ` ` +
-                            (timestamp.getHours() >= 12 ? "PM" : "AM")
-                          }
-                          summary={eventMessage}
-                        />
-                      </Feed.Event>
-                    </Feed>
-                  );
-                } else {
-                  const { user, timestamp, message, avatarInfo } = item;
-                  const { gender, id } = avatarInfo;
-                  let avatar: any;
-                  if (gender[0] === "M") {
-                    avatar = require("../assets/male_avatars/" + id + ".svg");
-                  } else {
-                    avatar = require("../assets/female_avatars/" + id + ".svg");
-                  }
-                  return (
-                    <Comment key={timestamp.getSeconds()}>
-                      <Comment.Avatar as="a" src={avatar} alt={"img"} />
-                      <Comment.Content>
-                        <Comment.Author>{user.name}</Comment.Author>
-                        <Comment.Metadata>
-                          <div>
-                            {timestamp.getHours() % 12}:
-                            {timestamp.getMinutes() <= 9 ? "0" : ""}
-                            {timestamp.getMinutes() + ` `}{" "}
-                            {timestamp.getHours() >= 12 ? "PM" : "AM"}
-                          </div>
-                        </Comment.Metadata>
-                        <Comment.Text>{message}</Comment.Text>
-                      </Comment.Content>
-                    </Comment>
-                  );
-                }
+                const { eventMessage, timestamp, message } = item;
+                return (
+                  <Message
+                    {...item}
+                    user={props.user}
+                    key={`${eventMessage || message}_${props.user?.username}_${timestamp.toString()}`}
+                  />
+                )
               })}
             </Comment.Group>
-            <Form reply onSubmit={sendChatMessage} autocomplete="off">
+            <Form reply onSubmit={sendChatMessage} autoComplete="off">
               <Form.Input
                 placeholder="Type your message here"
                 name="chatInputBox"
-                autocomplete="off"
+                autoComplete="off"
               />
               <Button
                 content="Send"

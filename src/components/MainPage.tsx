@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import HomePage from "./HomePage";
 import About from "./About";
@@ -6,7 +6,7 @@ import LoginPage from "./LoginPage";
 import SignupPage from "./SignupPage";
 import socketIOClient from "socket.io-client";
 
-const ENDPOINT = process.env.REACT_APP_WEBSITE_URL || "http://127.0.0.1:5000";
+const ENDPOINT = process.env.REACT_APP_WEBSITE_URL || "http://127.0.0.1:7483";
 
 interface UserInfo {
   token: string;
@@ -41,23 +41,41 @@ interface Props {
 }
 
 const MainPage: React.FC<Props> = (props) => {
-  const [socketValue, setSocketValue] =
-    useState<SocketIOClient.Socket | null>(null);
   const [currentRoom, setCurrentRoom] = useState<RoomDetails | null>(null);
   const [chatMessageList, setChatMessageList] = useState<Array<any>>([]);
+  const socketRef = useRef<SocketIOClient.Socket|null>(null);
+  const socket = socketRef.current;
 
-  let socket: SocketIOClient.Socket;
+  const addFeedEventToChat = useCallback((
+    eventMessage: string,
+    avatarInfo: { id: number; gender: string }
+  ) => {
+    const timestamp = new Date();
+    const feedEvent = { type: "event", eventMessage, timestamp, avatarInfo };
+    setChatMessageList([...chatMessageList, feedEvent]);
+  }, [chatMessageList, setChatMessageList]);
+
+  const addMessageToChat = useCallback((
+    user: UserInfo,
+    message: string,
+    avatarInfo: { id: number; gender: string }
+  ) => {
+    const timestamp = new Date();
+    const comment = { type: "comment", user, message, timestamp, avatarInfo };
+    setChatMessageList([...chatMessageList, comment]);
+  }, [chatMessageList, setChatMessageList]);
 
   useEffect(() => {
-    if (socketValue === null) {
-      socket = socketIOClient(ENDPOINT);
-      setSocketValue(socket);
-    } else {
-      socket = socketValue;
+    if (socketRef.current === null) {
+      const socket = socketIOClient(ENDPOINT);
+      socketRef.current = socket;
     }
-  });
+  }, []);
 
   useEffect(() => {
+    if (socket === null) return;
+
+    console.log("here")
     socket.on("messageReceived", (data: ChatMessage) => {
       const { user, message, avatarInfo } = data;
       addMessageToChat(user, message, avatarInfo);
@@ -96,28 +114,18 @@ const MainPage: React.FC<Props> = (props) => {
     socket.on("Incorrect room password", () => {
       alert("Incorrect room password");
     });
-  });
 
-  const addFeedEventToChat = (
-    eventMessage: string,
-    avatarInfo: { id: number; gender: string }
-  ) => {
-    const timestamp = new Date();
-    const feedEvent = { type: "event", eventMessage, timestamp, avatarInfo };
-    setChatMessageList([...chatMessageList, feedEvent]);
-  };
+    return () => {
+      socket.off("messageReceived");
+      socket.off("roomJoinNotification");
+      socket.off("Room does not exist");
+      socket.off("Incorrect room password");
+    };
 
-  const addMessageToChat = (
-    user: UserInfo,
-    message: string,
-    avatarInfo: { id: number; gender: string }
-  ) => {
-    const timestamp = new Date();
-    const comment = { type: "comment", user, message, timestamp, avatarInfo };
-    setChatMessageList([...chatMessageList, comment]);
-  };
+  }, [socket, props.user, setCurrentRoom, setChatMessageList, addMessageToChat, addFeedEventToChat]);
 
   const leaveChatRoom = (avatarInfo: { id: number; gender: string }) => {
+    if (socket === null) return;
     socket.emit("leaveChatRoom", {
       user: props.user,
       room: currentRoom,
@@ -133,7 +141,7 @@ const MainPage: React.FC<Props> = (props) => {
           <Route exact path="/" component={HomePage}>
             <HomePage
               user={props.user}
-              socket={socketValue}
+              socket={socket}
               room={currentRoom}
               chatMessageList={chatMessageList}
               logoutUser={props.logoutUser}
