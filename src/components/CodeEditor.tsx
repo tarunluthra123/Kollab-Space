@@ -32,18 +32,7 @@ import "ace-builds/src-noconflict/theme-solarized_dark";
 import "ace-builds/src-noconflict/theme-solarized_light";
 import "ace-builds/src-noconflict/theme-terminal";
 
-interface UserInfo {
-  token: string;
-  username: string;
-  name: string;
-  gender: string;
-}
-
-interface RoomDetails {
-  name: string;
-  password: string;
-  inviteCode: string;
-}
+import { UserInfo, RoomDetails } from "../utils/types";
 
 interface Props {
   user: UserInfo | null;
@@ -60,61 +49,61 @@ const CodeEditor: React.FC<Props> = (props) => {
   const [lastCursorUpdate, setLastCursorUpdate] = useState({ r: -1, c: -1 });
   const [recentlyUpdatedCode, setRecentlyUpdatedCode] = useState(false);
   const editorRef: any = useRef();
-  const socketValue = props.socket;
   const currentRoom = props.room;
-  let selectedLanguageTag = editorLanguage;
 
-  let socket: SocketIOClient.Socket;
+  const socket: SocketIOClient.Socket|null = props.socket;
 
   useEffect(() => {
-    if (socketValue) {
-      socket = socketValue;
+    if (!socket) return;
 
-      socket.on("codeUpdate", (data: any) => {
-        const newCode = data.code;
-        if (newCode == code) return;
-        if (data.user?.username == props.user?.username) return;
-        setCode(newCode);
-        setRecentlyUpdatedCode(true);
-        if (data.cursorPosition && editorRef && editorRef.current) {
-          const editor = editorRef.current.editor;
-          editor.moveCursorToPosition(data.cursorPosition);
+    socket.on("codeUpdate", (data: any) => {
+      const newCode = data.code;
+      if (newCode === code) return;
+      if (data.user?.username === props.user?.username) return;
+      setCode(newCode);
+      setRecentlyUpdatedCode(true);
+      if (data.cursorPosition && editorRef && editorRef.current) {
+        const editor = editorRef.current.editor;
+        editor.moveCursorToPosition(data.cursorPosition);
+      }
+    });
+
+    socket.on("cursorPositionUpdate", (data: any) => {
+      if (editorRef && editorRef.current) {
+        const editor = editorRef.current.editor;
+        const currentPosition = editor?.getCursorPosition();
+        if (
+          data.row === currentPosition.row &&
+          data.column === currentPosition.column
+        ) {
+          return;
         }
-      });
+        setLastCursorUpdate({ r: data.row, c: data.column });
+        editor?.moveCursorToPosition(data);
+      }
+    });
 
-      socket.on("cursorPositionUpdate", (data: any) => {
-        if (editorRef && editorRef.current) {
-          const editor = editorRef.current.editor;
-          const currentPosition = editor?.getCursorPosition();
-          if (
-            data.row === currentPosition.row &&
-            data.column === currentPosition.column
-          ) {
-            return;
-          }
-          setLastCursorUpdate({ r: data.row, c: data.column });
-          editor?.moveCursorToPosition(data);
-        }
-      });
+    socket.on("languageTagUpdate", (data: { lang: string }) => {
+      const newLanguage = data.lang;
+      if (editorLanguage === newLanguage) return;
+      setEditorLanguage(newLanguage);
+    });
 
-      socket.on("languageTagUpdate", (data: { lang: string }) => {
-        const newLanguage = data.lang;
-        if (editorLanguage === newLanguage) return;
-        setEditorLanguage(newLanguage);
-      });
+    return () => {
+      socket.off("codeUpdate");
+      socket.off("cursorPositionUpdate");
+      socket.off("languageTagUpdate");
     }
   });
 
-  useEffect(() => {
-    selectedLanguageTag = editorLanguage;
-  }, [editorLanguage]);
-
   const onChange = (codeValue: string, event: any) => {
-    if (codeValue == code) return;
-    if (recentlyUpdatedCode) return;
+    console.log({ codeValue, event, recentlyUpdatedCode, code, socket })
+    if (codeValue === code) return;
+    // if (recentlyUpdatedCode) return;
     setRecentlyUpdatedCode(false);
     const cursorPosition = event.end;
     setCode(codeValue);
+
     if (socket) {
       socket.emit("codeChange", {
         code: codeValue,
@@ -129,7 +118,7 @@ const CodeEditor: React.FC<Props> = (props) => {
     event: React.SyntheticEvent<HTMLElement, Event>,
     data: DropdownProps
   ) => {
-    if (typeof data.value === "string") {
+    if (typeof data.value === "string" && socket) {
       setEditorLanguage(data.value);
       socket.emit("languageChange", {
         lang: data.value,
@@ -201,7 +190,7 @@ const CodeEditor: React.FC<Props> = (props) => {
                 selection
                 placeholder="Language"
                 onChange={handleLanguageTagChange}
-                value={selectedLanguageTag}
+                value={editorLanguage}
                 options={[
                   {
                     key: "javascript",

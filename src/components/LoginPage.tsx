@@ -15,6 +15,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Axios from "axios";
 import { useHistory } from "react-router-dom";
 import Layout from "./Layout";
+import { UserInfo } from "../utils/types";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -35,13 +36,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
-
-interface UserInfo {
-  token: string;
-  username: string;
-  name: string;
-  gender: string;
-}
 
 interface Props {
   loginUser: (userInfo: UserInfo) => void;

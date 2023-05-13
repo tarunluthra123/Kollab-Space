@@ -10,6 +10,7 @@ import Menu from "@material-ui/core/Menu";
 import { Link, HashRouter as Router } from "react-router-dom";
 import { Button, Dropdown } from "semantic-ui-react";
 import KollabSpaceLogo from "../assets/kollab_space_logo.png";
+import { UserInfo } from "../utils/types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,12 +25,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-
-interface UserInfo {
-  token: string;
-  username: string;
-  name: string;
-}
 
 interface Props {
   pageTitle: string;

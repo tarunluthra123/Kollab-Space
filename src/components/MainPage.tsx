@@ -5,21 +5,9 @@ import About from "./About";
 import LoginPage from "./LoginPage";
 import SignupPage from "./SignupPage";
 import socketIOClient from "socket.io-client";
+import { UserInfo, RoomDetails } from "../utils/types";
 
 const ENDPOINT = process.env.REACT_APP_WEBSITE_URL || "http://127.0.0.1:7483";
-
-interface UserInfo {
-  token: string;
-  username: string;
-  name: string;
-  gender: string;
-}
-
-interface RoomDetails {
-  name: string;
-  password: string;
-  inviteCode: string;
-}
 
 interface RoomJoinNotification {
   notification: string;

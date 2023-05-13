@@ -4,13 +4,7 @@ import MailIcon from "../assets/mail_icon.png";
 import GithubIcon from "../assets/github_icon.png";
 import LinkedInIcon from "../assets/linkedin_logo.png";
 import { Button, Header } from "semantic-ui-react";
-
-interface UserInfo {
-  token: string;
-  username: string;
-  name: string;
-  gender: string;
-}
+import { UserInfo } from "../utils/types";
 
 interface Props {
   user: UserInfo | null;

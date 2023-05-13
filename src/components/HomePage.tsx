@@ -3,19 +3,7 @@ import ChatBox from "./ChatBox";
 import Layout from "./Layout";
 import { Grid } from "@material-ui/core";
 import CodeEditor from "./CodeEditor";
-
-interface UserInfo {
-  token: string;
-  username: string;
-  name: string;
-  gender: string;
-}
-
-interface RoomDetails {
-  name: string;
-  password: string;
-  inviteCode: string;
-}
+import { UserInfo, RoomDetails } from "../utils/types";
 
 interface Props {
   user: UserInfo | null;

@@ -14,6 +14,7 @@ import {
   Segment
 } from "semantic-ui-react";
 import CSS from "csstype";
+import { UserInfo, RoomDetails } from "../utils/types";
 import Message from "./Message";
 
 const ICON_NUMBER = Math.ceil(Math.random() * 10);
@@ -27,19 +28,6 @@ const ChatBoxStyle: CSS.Properties = {
   border: "2px",
   marginRight: "10%",
 };
-
-interface UserInfo {
-  token: string;
-  username: string;
-  name: string;
-  gender: string;
-}
-
-interface RoomDetails {
-  name: string;
-  password: string;
-  inviteCode: string;
-}
 
 interface Props {
   user: UserInfo | null;
@@ -57,9 +45,8 @@ const ChatBox: React.FC<Props> = (props) => {
     useState<boolean>(false);
   const currentRoom = props.room;
   const chatMessageList = props.chatMessageList;
-  const socketValue = props.socket;
 
-  let socket: SocketIOClient.Socket;
+  const { socket } = props;
   const gender = props?.user?.gender || "";
   const avatarInfo: { gender: string; id: number } = useMemo(() => {
     return {
@@ -68,11 +55,9 @@ const ChatBox: React.FC<Props> = (props) => {
     };
   }, [gender]);
 
-  useEffect(() => {
-    if (socketValue) socket = socketValue;
-  });
-
   const handleCreateRoom = () => {
+    if (!socket) return;
+
     socket.emit("createNewRoom", {
       user: props.user,
     });
@@ -87,6 +72,8 @@ const ChatBox: React.FC<Props> = (props) => {
   };
 
   const handleJoinRoom = (e: any) => {
+    if (!socket) return;
+
     const roomName: string = e.target.idInputField.value;
     const roomPassword: string = e.target.passwordInputField.value;
     const room = {
@@ -101,6 +88,8 @@ const ChatBox: React.FC<Props> = (props) => {
   };
 
   const sendChatMessage = (event: any) => {
+    if (!socket) return;
+
     const message = event.target.chatInputBox.value;
     const user = props.user;
     const room = currentRoom;
@@ -118,6 +107,8 @@ const ChatBox: React.FC<Props> = (props) => {
   };
 
   const handleJoinViaCode = (event: React.FormEvent<HTMLFormElement> | any) => {
+    if (!socket) return;
+
     const inviteCode = event.target.inviteCodeInputField.value;
     socket.emit("joinRoomViaInviteCode", {
       inviteCode,
@@ -329,7 +320,6 @@ const ChatBox: React.FC<Props> = (props) => {
                 return (
                   <Message
                     {...item}
-                    user={props.user}
                     key={`${eventMessage || message}_${props.user?.username}_${timestamp.toString()}`}
                   />
                 )

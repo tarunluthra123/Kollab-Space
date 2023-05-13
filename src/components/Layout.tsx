@@ -1,12 +1,7 @@
 import React from "react";
 import { Box } from "@material-ui/core";
 import MenuAppBar from "./MenuAppBar";
-
-interface UserInfo {
-  token: string;
-  username: string;
-  name: string;
-}
+import { UserInfo } from "../utils/types";
 
 interface Props {
   user: UserInfo | null;

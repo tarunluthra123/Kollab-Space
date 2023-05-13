@@ -4,22 +4,18 @@ const express = require("express");
 const app = express();
 const http = require("http");
 const server = http.createServer(app);
-const socket_io_server = require("./socket-io-server");
-const io = socket_io_server(server);
+const socketIoServer = require("./socket");
+socketIoServer(server);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/", express.static(path.join(__dirname, "../build")));
-app.use("/api", require("./api").route);
+app.use("/api", require("./api"));
 
 //For testing purpose
 app.get("/ping", function (req, res) {
-  res.json({
-    1: "one",
-    2: "two",
-    3: "three",
-  });
+  res.send("pong");
 });
 
 app.get("/", function (req, res) {
